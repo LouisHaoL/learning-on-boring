@@ -1,0 +1,10 @@
+# 运行产生的数据文件
+tmp_tests/
+tmp_smoke/
+tmp_t/
+tmp_crash/
+demo_data/
+bench_data/
+*.db
+*.db.wal
+__pycache__/
