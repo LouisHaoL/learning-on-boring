@@ -26,6 +26,6 @@
 
 | 2026-09-06 | R3 | [简易数据库](demos/mini-db/)(WAL + B-tree 存储引擎) | Demo | 🚧 进行中 |
 | 2026-09-06 | R3 | [浏览器渲染管线与关键渲染路径](docs/browser-rendering-pipeline.md) | 文档 | 🚧 进行中 |
-| 2026-09-06 | R3 | [一致性哈希与分布式路由](demos/consistent-hashing/) | Demo | 🚧 进行中 |
+| 2026-09-06 | R3 | [一致性哈希与分布式路由](demos/consistent-hashing/)(哈希环 + 虚拟节点,迁移率/负载均衡实测) | Demo | ✅ 9 组测试 · 迁移率 9.2% vs 取模 91% |
 
 <!-- 新轮次从上方追加新行,交付完成后把 🚧 改为 ✅ -->
