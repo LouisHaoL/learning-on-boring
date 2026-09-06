@@ -1,0 +1,17 @@
+# 递归:斐波那契数列
+# 体现:函数定义/递归调用、多分支 if/else、二元运算优先级
+
+fn fib(n) {
+    if n <= 1 {
+        return n;
+    }
+    return fib(n - 1) + fib(n - 2);
+}
+
+let i = 0;
+while i <= 10 {
+    print("fib(" + str(i) + ") = " + str(fib(i)));
+    i = i + 1;
+}
+
+print("fib(20) = " + str(fib(20)));

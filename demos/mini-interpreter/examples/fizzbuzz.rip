@@ -1,0 +1,16 @@
+# 经典 FizzBuzz
+# 体现:while 循环、逻辑与比较运算符、取模、字符串插值、块级作用域
+
+let n = 1;
+while n <= 20 {
+    if n % 15 == 0 {
+        print("FizzBuzz");
+    } else if n % 3 == 0 {
+        print("Fizz");
+    } else if n % 5 == 0 {
+        print("Buzz");
+    } else {
+        print(n);
+    }
+    n = n + 1;
+}

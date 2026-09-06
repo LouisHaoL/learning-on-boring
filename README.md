@@ -17,7 +17,7 @@
 | 时间 | 轮次 | 主题 | 类型 | 交付物 |
 |------|------|------|------|--------|
 | 2026-09-06 | R1 | [Git 内部原理](docs/git-internals.md)(对象模型 / refs / packfile) | 文档+实验 | 🚧 进行中 |
-| 2026-09-06 | R1 | [Mini 语言解释器](demos/mini-interpreter/)(递归下降 + tree-walking) | Demo | 🚧 进行中 |
+| 2026-09-06 | R1 | [Mini 语言解释器 Ripple](demos/mini-interpreter/)(递归下降 + tree-walking,闭包/插值/块级作用域) | Demo | ✅ 25 项测试通过 |
 | 2026-09-06 | R1 | [SQLite 索引与查询计划](docs/sqlite-indexing.md) | 文档+实验 | 🚧 进行中 |
 
 <!-- 新轮次从上方追加新行,交付完成后把 🚧 改为 ✅ -->

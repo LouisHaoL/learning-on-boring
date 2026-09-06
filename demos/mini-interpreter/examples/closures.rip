@@ -1,0 +1,42 @@
+# 闭包与函数作为一等值
+# 体现:匿名 fn 表达式、内层函数捕获外层变量(词法作用域)、高阶函数、列表
+
+# 计数器工厂:make_counter 返回的函数各自持有独立的 count
+fn make_counter(start) {
+    let count = start;
+    return fn() {
+        count = count + 1;
+        return count;
+    };
+}
+
+let a = make_counter(10);
+let b = make_counter(0);
+
+print(a());   # 11  —— a 的闭包里 count=10,先加 1
+print(a());   # 12
+print(b());   # 1   —— b 与 a 互不干扰,说明每次调用 make_counter 生成新作用域
+
+# 高阶函数:adder 返回「加了 n 的函数」
+fn adder(n) {
+    return fn(x) { return x + n; };
+}
+
+let add5 = adder(5);
+let add10 = adder(10);
+print(add5(1));    # 6
+print(add10(1));   # 11
+
+# 函数可以作为列表元素,用索引取出来再调用
+let ops = [add5, add10];
+print(ops[1](100));  # 110
+
+# compose:把两个函数组合成一个(闭包捕获 f 和 g)
+fn compose(f, g) {
+    return fn(x) { return f(g(x)); };
+}
+
+let inc = fn(x) { return x + 1; };
+let dbl = fn(x) { return x * 2; };
+let inc_then_dbl = compose(dbl, inc);
+print(inc_then_dbl(4));  # 10 —— (4+1)*2
