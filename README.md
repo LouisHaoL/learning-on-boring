@@ -54,6 +54,6 @@
 
 | 2026-09-06 | R10 | R7 两篇提取式自测(回顾位,复用锚清单) | 回顾 | 🚧 进行中 |
 | 2026-09-06 | R10 | [集装箱如何改变世界](docs/shipping-container.md)(运输成本革命与全球化) | 知识研究 | 🚧 进行中 |
-| 2026-09-06 | R10 | [极地探险的决策史:Scott vs Amundsen](docs/polar-expedition-decisions.md)(风险、冗余与运气) | 知识研究 | 🚧 进行中 |
+| 2026-09-06 | R10 | [极地探险的决策史:Scott vs Amundsen](docs/polar-expedition-decisions.md)(风险、冗余与运气) | 知识研究 | ✅ 351 行 · 8 决策点对照表,运气 vs 决策定量拆账 |
 
 <!-- 新轮次从上方追加新行,交付完成后把 🚧 改为 ✅ -->
