@@ -27,20 +27,24 @@
 | 2 | 浏览器渲染管线(headless Chromium CDP 实测) | 文档 + 4 组实验 | `docs/browser-rendering-pipeline.md` + `experiments/browser-rendering/` |
 | 3 | 一致性哈希(虚拟节点 + FNV-1a 聚簇发现) | 可运行 demo | `demos/consistent-hashing/` |
 
-## 第 4 轮(2026-09-06,进行中)
+## 第 4 轮(2026-09-06,进行中,已转向纯知识领域)
+
+> 课题方向约束:计算机/编程相关主题一律不选(用户明确要求)。R1-R3 的
+> 技术类交付保留归档,后续轮次聚焦通识知识。
 
 | # | 方向 | 交付物 | 位置 |
 |---|------|--------|------|
-| 1 | TCP 拥塞控制(Reno/CUBIC/BBR + 窗口模拟器) | 文档 + Demo | `docs/tcp-congestion-control.md` + `demos/tcp-congestion-sim/` |
-| 2 | Ripple 字节码 VM(树遍历 → 字节码/栈式 VM) | 可运行 demo | `demos/ripple-vm/` |
-| 3 | Git rebase 与 merge 内部机制 | 文档 + 实验 | `docs/git-rebase-internals.md` + `experiments/git-rebase/` |
+| 1 | 地图投影的科学、历史与政治(墨卡托、格陵兰问题、投影之争) | 知识研究文档 | `docs/map-projections.md` |
+| 2 | 货币简史:从贝壳到法币(货币本质、金本位、恶性通胀案例) | 知识研究文档 | `docs/history-of-money.md` |
+| 3 | 十二平均律:数学与音乐的四百年(毕达哥拉斯音差、律制演进) | 知识研究文档 | `docs/equal-temperament.md` |
 
-## 第 5 轮(候选)
+## 第 5 轮(候选,均为通识方向)
 
-- LSM-tree vs B-tree 写放大(文档 + 实验,衔接 mini-db)
-- 浏览器事件循环与微任务/宏任务(文档 + 实验)
-- Raft 共识算法(文档 + 可视化 demo)
-- 编码:UTF-8/UTF-16/变长整数编码设计(文档 + demo)
+- 熵与热力学第二定律:从蒸汽机到信息论
+- 大航海时代的 navigation 与经度问题(与 R4 地图投影天然衔接)
+- 睡眠科学:昼夜节律、记忆巩固与睡眠债务
+- 人类语言谱系:印欧语系假说与语言年代学
+- 博弈论改变世界的五个时刻(纳什均衡、公地悲剧、拍卖设计)
 
 ## 第 3 轮(待定)
 
