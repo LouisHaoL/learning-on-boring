@@ -1,0 +1,450 @@
+SQLite 版本: 3.50.4
+数据库文件: D:\workspace\learning\experiments\sqlite-indexing\sqlite-indexing.db
+建库+造 100000 行数据耗时 0.50 s
+
+==============================================================================
+实验 0:表结构与基础统计
+==============================================================================
+orders
+    CREATE TABLE orders (
+            id          INTEGER PRIMARY KEY,   -- rowid 别名
+            customer_id INTEGER NOT NULL,
+            product_id  INTEGER NOT NULL,
+            status      TEXT    NOT NULL,
+            amount      REAL    NOT NULL,
+            created_at  TEXT    NOT NULL,      -- 'YYYY-MM-DD'
+            email       TEXT,
+            note        TEXT
+        )
+users_rowid
+    CREATE TABLE users_rowid (
+            email TEXT NOT NULL,
+            name  TEXT NOT NULL
+        )
+users_rowid_email
+    CREATE UNIQUE INDEX users_rowid_email ON users_rowid(email)
+users_wr
+    CREATE TABLE users_wr (
+            email TEXT NOT NULL PRIMARY KEY,
+            name  TEXT NOT NULL
+        ) WITHOUT ROWID
+
+orders 行数 = 100000
+page_size  = 4096
+page_count = 2716
+db 总大小约 = 10.6 MB
+
+rowid 范围(id 列即 rowid 别名):
+  min=1, max=100000
+
+status 分布:
+  paid        54636  (54.6%)
+  shipped     20029  (20.0%)
+  cancelled   10137  (10.1%)
+  pending     10099  (10.1%)
+  refunded     5099  (5.1%)
+
+==============================================================================
+实验 1:无索引全表扫描 vs 单列索引点查
+==============================================================================
+
+--- PLAN [无索引] ---
+SQL: SELECT id, amount FROM orders WHERE status = ?
+params: ('refunded',)
+  SCAN orders
+TIME [无索引 全表扫描]:     9.792 ms/次  (rows=5099, repeat=5)
+
+--- PLAN [有 idx_orders_status] ---
+SQL: SELECT id, amount FROM orders WHERE status = ?
+params: ('refunded',)
+  SEARCH orders USING INDEX idx_orders_status (status=?)
+TIME [有索引 SEARCH]:     6.719 ms/次  (rows=5099, repeat=50)
+
+对照:命中行数极多的条件(planner 仍可能选索引,也可能改回扫描,看统计)
+
+--- PLAN [status=paid(约55%行)] ---
+SQL: SELECT id, amount FROM orders WHERE status = ?
+params: ('paid',)
+  SEARCH orders USING INDEX idx_orders_status (status=?)
+TIME [有索引 but 命中55%]:    30.833 ms/次  (rows=54636, repeat=5)
+
+rowid 点查(基准):
+
+--- PLAN [rowid 点查] ---
+SQL: SELECT amount FROM orders WHERE id = ?
+params: (12345,)
+  SEARCH orders USING INTEGER PRIMARY KEY (rowid=?)
+TIME [rowid 点查]:     0.012 ms/次  (rows=1, repeat=200)
+
+==============================================================================
+实验 2:复合索引与最左前缀
+==============================================================================
+
+--- PLAN [等值 customer+status+范围 date] ---
+SQL: SELECT id FROM orders WHERE customer_id=? AND status=? AND created_at>=?
+params: (123, 'paid', '2025-06-01')
+  SEARCH orders USING COVERING INDEX idx_orders_cust_status_date (customer_id=? AND status=? AND created_at>?)
+TIME [等值 customer+status+范围 date]:     0.013 ms/次  (rows=4, repeat=100)
+
+--- PLAN [等值 customer+status] ---
+SQL: SELECT id FROM orders WHERE customer_id=? AND status=?
+params: (123, 'paid')
+  SEARCH orders USING COVERING INDEX idx_orders_cust_status_date (customer_id=? AND status=?)
+TIME [等值 customer+status]:     0.015 ms/次  (rows=9, repeat=100)
+
+--- PLAN [只有最左列 customer] ---
+SQL: SELECT id FROM orders WHERE customer_id=?
+params: (123,)
+  SEARCH orders USING COVERING INDEX idx_orders_cust_status_date (customer_id=?)
+TIME [只有最左列 customer]:     0.021 ms/次  (rows=21, repeat=100)
+
+--- PLAN [跳过最左列:只给 status] ---
+SQL: SELECT id FROM orders WHERE status=?
+params: ('refunded',)
+  SEARCH orders USING COVERING INDEX idx_orders_status (status=?)
+TIME [跳过最左列:只给 status]:     1.613 ms/次  (rows=5099, repeat=100)
+
+--- PLAN [跳过中间列:customer+date] ---
+SQL: SELECT id FROM orders WHERE customer_id=? AND created_at>=?
+params: (123, '2025-06-01')
+  SEARCH orders USING COVERING INDEX idx_orders_cust_status_date (customer_id=?)
+TIME [跳过中间列:customer+date]:     0.019 ms/次  (rows=12, repeat=100)
+
+--- PLAN [全表 ORDER BY 复合索引列(免排序)] ---
+SQL: SELECT customer_id, status FROM orders ORDER BY customer_id, status LIMIT 20
+  SCAN orders USING COVERING INDEX idx_orders_cust_status_date
+TIME [全表 ORDER BY 复合索引列(免排序)]:     0.020 ms/次  (rows=20, repeat=5)
+
+--- PLAN [ORDER BY 顺序与索引不符(需 TEMP B-TREE)] ---
+SQL: SELECT customer_id, status FROM orders ORDER BY status, customer_id LIMIT 20
+  SCAN orders USING INDEX idx_orders_status
+  USE TEMP B-TREE FOR LAST TERM OF ORDER BY
+TIME [ORDER BY 顺序与索引不符(需 TEMP B-TREE)]:     9.487 ms/次  (rows=20, repeat=5)
+
+--- PLAN [GROUP BY 非索引序(TEMP B-TREE)] ---
+SQL: SELECT status, count(*) FROM orders GROUP BY status
+  SCAN orders USING COVERING INDEX idx_orders_status
+TIME [GROUP BY 非索引序(TEMP B-TREE)]:     3.446 ms/次  (rows=5, repeat=5)
+
+==============================================================================
+实验 3:覆盖索引(USING COVERING INDEX)
+==============================================================================
+
+--- PLAN [覆盖索引:只取 status/amount] ---
+SQL: SELECT amount FROM orders WHERE status = ?
+params: ('refunded',)
+  SEARCH orders USING COVERING INDEX idx_orders_status_amount (status=?)
+TIME [COVERING INDEX]:     1.443 ms/次  (rows=5099, repeat=50)
+
+--- PLAN [非覆盖:要回表取 note] ---
+SQL: SELECT id, note FROM orders WHERE status = ?
+params: ('refunded',)
+  SEARCH orders USING INDEX idx_orders_status_amount (status=?)
+TIME [INDEX + 回表]:    14.578 ms/次  (rows=5099, repeat=50)
+
+--- PLAN [count(*) 走覆盖索引] ---
+SQL: SELECT count(*) FROM orders WHERE status = ?
+params: ('refunded',)
+  SEARCH orders USING COVERING INDEX idx_orders_status_amount (status=?)
+TIME [COVERING count(*)]:     0.134 ms/次  (rows=1, repeat=50)
+
+索引内部结构 peek(复合索引键值示例,来自子查询模拟):
+  key=(cancelled, 5.29) -> rowid=67790
+  key=(cancelled, 5.39) -> rowid=48100
+  key=(cancelled, 5.55) -> rowid=12904
+  key=(cancelled, 5.84) -> rowid=92056
+  key=(cancelled, 6.47) -> rowid=60849
+
+==============================================================================
+实验 4:索引失效的常见写法
+==============================================================================
+
+--- PLAN [基准:created_at 直接等值] ---
+SQL: SELECT id FROM orders WHERE created_at = ?
+params: ('2025-06-15',)
+  SEARCH orders USING COVERING INDEX idx_orders_created (created_at=?)
+TIME [基准:created_at 直接等值]:     0.072 ms/次  (rows=247, repeat=50)
+
+--- PLAN [函数包裹列:substr(created_at,1,7)=?] ---
+SQL: SELECT id FROM orders WHERE substr(created_at,1,7) = ?
+params: ('2025-06',)
+  SCAN orders USING COVERING INDEX idx_orders_created
+TIME [函数包裹列:substr(created_at,1,7)=?]:     6.374 ms/次  (rows=8199, repeat=50)
+
+--- PLAN [函数包裹列:upper(status)=?] ---
+SQL: SELECT id FROM orders WHERE upper(status) = ?
+params: ('REFUNDED',)
+  SCAN orders USING COVERING INDEX idx_orders_status_amount
+TIME [函数包裹列:upper(status)=?]:    11.096 ms/次  (rows=5099, repeat=50)
+
+--- PLAN [隐式类型转换:customer_id 与字符串比较] ---
+SQL: SELECT id FROM orders WHERE customer_id = ?
+params: ('123',)
+  SEARCH orders USING COVERING INDEX idx_orders_cust_status_date (customer_id=?)
+TIME [隐式类型转换:customer_id 与字符串比较]:     0.017 ms/次  (rows=21, repeat=50)
+
+--- PLAN [LIKE 后缀通配 '%com'] ---
+SQL: SELECT id FROM orders WHERE email LIKE ?
+params: ('%com',)
+  SCAN orders USING COVERING INDEX idx_orders_email
+TIME [LIKE 后缀通配 '%com']:    23.156 ms/次  (rows=66672, repeat=50)
+
+--- PLAN [LIKE 前缀通配 'user1%'(可用索引)] ---
+SQL: SELECT id FROM orders WHERE email LIKE ?
+params: ('user1%',)
+  SCAN orders USING COVERING INDEX idx_orders_email
+TIME [LIKE 前缀通配 'user1%'(可用索引)]:     9.545 ms/次  (rows=22009, repeat=50)
+
+--- PLAN [OR 连接两个不同列(各走各索引 or 全扫)] ---
+SQL: SELECT id FROM orders WHERE status=? OR customer_id=?
+params: ('refunded', 123)
+  MULTI-INDEX OR
+  INDEX 1
+  SEARCH orders USING INDEX idx_orders_status_amount (status=?)
+  INDEX 2
+  SEARCH orders USING COVERING INDEX idx_orders_cust_status_date (customer_id=?)
+TIME [OR 连接两个不同列(各走各索引 or 全扫)]:     1.833 ms/次  (rows=5118, repeat=5)
+
+--- PLAN [同列 OR 可走 IN 优化] ---
+SQL: SELECT id FROM orders WHERE customer_id IN (?,?)
+params: (123, 456)
+  SEARCH orders USING COVERING INDEX idx_orders_cust_status_date (customer_id=?)
+TIME [同列 OR 可走 IN 优化]:     0.025 ms/次  (rows=42, repeat=50)
+
+--- PLAN [对索引列做算术:customer_id+0=?] ---
+SQL: SELECT id FROM orders WHERE customer_id+0 = ?
+params: (123,)
+  SCAN orders USING COVERING INDEX idx_orders_cust_status_date
+TIME [对索引列做算术:customer_id+0=?]:     2.826 ms/次  (rows=21, repeat=50)
+
+补充:表达式索引可以把'函数包裹列'救回来
+
+--- PLAN [表达式索引] ---
+SQL: SELECT id FROM orders WHERE lower(email) = ?
+params: ('user123@example.com',)
+  SEARCH orders USING COVERING INDEX idx_orders_email_lower (<expr>=?)
+TIME [表达式索引]:     0.024 ms/次  (rows=7, repeat=50)
+
+补充:LIKE 前缀优化的前提(case_sensitive_like / NOCASE 索引)
+默认 LIKE 大小写不敏感 + BINARY 索引 => 不能转 range:
+
+--- PLAN [LIKE 默认] ---
+SQL: SELECT id FROM orders WHERE email LIKE ?
+params: ('user1%',)
+  SCAN orders USING COVERING INDEX idx_orders_email
+PRAGMA case_sensitive_like=ON 后 => 可转 range:
+
+--- PLAN [LIKE csl=ON] ---
+SQL: SELECT id FROM orders WHERE email LIKE ?
+params: ('user1%',)
+  SEARCH orders USING COVERING INDEX idx_orders_email (email>? AND email<?)
+默认 LIKE + COLLATE NOCASE 索引 => 也可转 range:
+
+--- PLAN [LIKE + NOCASE 索引] ---
+SQL: SELECT id FROM orders WHERE email LIKE ?
+params: ('user1%',)
+  SEARCH orders USING COVERING INDEX idx_orders_email_nocase (email>? AND email<?)
+
+补充:无类型声明列的混合存储类(正确性陷阱,不是性能问题)
+  WHERE v = 123   -> [(1, 'integer')]
+  WHERE v = '123' -> [(2, 'text')]
+
+--- PLAN [mixed v='123'] ---
+SQL: SELECT rowid FROM mixed WHERE v = ?
+params: ('123',)
+  SEARCH mixed USING COVERING INDEX idx_mixed (v=?)
+  两次查询都走索引,但各自只能命中同存储类的行。
+
+==============================================================================
+实验 5:ORDER BY / GROUP BY 与索引序、TEMP B-TREE
+==============================================================================
+
+--- PLAN [ORDER BY 索引列 LIMIT 5(免全排序)] ---
+SQL: SELECT id, created_at FROM orders ORDER BY created_at LIMIT 5
+  SCAN orders USING COVERING INDEX idx_orders_created
+TIME [ORDER BY 索引列 LIMIT 5(免全排序)]:     0.015 ms/次  (rows=5, repeat=5)
+
+--- PLAN [ORDER BY 索引列(无 LIMIT,顺序扫描全表)] ---
+SQL: SELECT count(*) FROM (SELECT id, created_at FROM orders ORDER BY created_at)
+  CO-ROUTINE (subquery-1)
+  SCAN orders USING COVERING INDEX idx_orders_created
+  SCAN (subquery-1)
+TIME [ORDER BY 索引列(无 LIMIT,顺序扫描全表)]:     2.794 ms/次  (rows=1, repeat=5)
+
+--- PLAN [ORDER BY 非索引列 note] ---
+SQL: SELECT id FROM orders ORDER BY note LIMIT 5
+  SCAN orders
+  USE TEMP B-TREE FOR ORDER BY
+TIME [ORDER BY 非索引列 note]:     8.890 ms/次  (rows=5, repeat=5)
+
+--- PLAN [ORDER BY 索引列但反向 DESC] ---
+SQL: SELECT id, created_at FROM orders ORDER BY created_at DESC LIMIT 5
+  SCAN orders USING COVERING INDEX idx_orders_created
+TIME [ORDER BY 索引列但反向 DESC]:     0.015 ms/次  (rows=5, repeat=5)
+
+--- PLAN [GROUP BY status(有 idx_orders_status 单列索引)] ---
+SQL: SELECT status, count(*) FROM orders GROUP BY status
+  SCAN orders USING COVERING INDEX idx_orders_status
+TIME [GROUP BY status(有 idx_orders_status 单列索引)]:     3.201 ms/次  (rows=5, repeat=5)
+
+--- PLAN [DISTINCT email] ---
+SQL: SELECT DISTINCT email FROM orders LIMIT 10
+  SCAN orders USING COVERING INDEX idx_orders_email
+TIME [DISTINCT email]:     0.018 ms/次  (rows=10, repeat=5)
+
+==============================================================================
+实验 6:ANALYZE 与 sqlite_stat1 对 planner 的影响
+==============================================================================
+当前已有索引:
+  idx_mixed
+  idx_orders_created
+  idx_orders_cust_status_date
+  idx_orders_email
+  idx_orders_email_lower
+  idx_orders_email_nocase
+  idx_orders_status
+  idx_orders_status_amount
+  users_rowid_email
+
+--- ANALYZE 前:两条候选索引,planner 没有统计信息 ---
+
+--- PLAN [ANALYZE 前] ---
+SQL: SELECT id FROM orders WHERE customer_id = ? AND status = ?
+params: (123, 'paid')
+  SEARCH orders USING COVERING INDEX idx_orders_cust_status_date (customer_id=? AND status=?)
+TIME [ANALYZE 前]:     0.014 ms/次  (rows=9, repeat=50)
+
+--- ANALYZE 后 ---
+ANALYZE 耗时 39.4 ms
+sqlite_stat1 内容:
+  tbl=mixed          idx=idx_mixed                      stat=3 1
+  tbl=orders         idx=idx_orders_created             stat=100000 274
+  tbl=orders         idx=idx_orders_cust_status_date    stat=100000 20 5 1
+  tbl=orders         idx=idx_orders_email               stat=100000 7
+  tbl=orders         idx=idx_orders_email_lower         stat=100000 7
+  tbl=orders         idx=idx_orders_email_nocase        stat=100000 7
+  tbl=orders         idx=idx_orders_status              stat=100000 20000
+  tbl=orders         idx=idx_orders_status_amount       stat=100000 20000 1
+  tbl=users_rowid    idx=users_rowid_email              stat=5000 1
+  tbl=users_wr       idx=users_wr                       stat=5000 1
+
+--- PLAN [ANALYZE 后] ---
+SQL: SELECT id FROM orders WHERE customer_id = ? AND status = ?
+params: (123, 'paid')
+  SEARCH orders USING COVERING INDEX idx_orders_cust_status_date (customer_id=? AND status=?)
+TIME [ANALYZE 后]:     0.014 ms/次  (rows=9, repeat=50)
+
+--- ANALYZE 后 range 条件:created_at 范围查询 ---
+
+--- PLAN [range] ---
+SQL: SELECT id FROM orders WHERE created_at >= ? AND created_at < ?
+params: ('2025-06-01', '2025-06-02')
+  SEARCH orders USING COVERING INDEX idx_orders_created (created_at>? AND created_at<?)
+TIME [range 1天]:     0.082 ms/次  (rows=278, repeat=50)
+
+提示:查询级的替代方案 —— PRAGMA optimize / 'ANALYZE sqlite_schema'
+
+--- ANALYZE 的硬性开关效应:index skip-scan 依赖 sqlite_stat1 ---
+
+--- PLAN [无 stat1] ---
+SQL: SELECT a FROM t WHERE b = ?
+params: (5,)
+  SCAN t
+TIME [无 stat1 全表扫描]:     4.750 ms/次  (rows=1, repeat=20)
+  sqlite_stat1: idx=t_ab stat=200000 100000 2
+
+--- PLAN [ANALYZE 后 skip-scan] ---
+SQL: SELECT a FROM t WHERE b = ?
+params: (5,)
+  SEARCH t USING COVERING INDEX t_ab (ANY(a) AND b=?)
+TIME [ANALYZE 后 skip-scan]:     0.002 ms/次  (rows=1, repeat=20)
+
+==============================================================================
+实验 7:WITHOUT ROWID vs rowid 表 + 唯一索引
+==============================================================================
+users_rowid:普通 rowid 表 + UNIQUE INDEX(email)
+users_wr   :WITHOUT ROWID,email 即主键(表本身就是一棵索引 B-tree)
+各对象占用存储(dbstat, 单位 KB):
+  orders                    10328.0 KB
+  idx_orders_cust_status_date   2784.0 KB
+  idx_orders_email_nocase    2604.0 KB
+  idx_orders_email_lower     2604.0 KB
+  idx_orders_email           2604.0 KB
+  t_ab                       2560.0 KB
+  t                          2384.0 KB
+  idx_orders_status_amount   2288.0 KB
+  idx_orders_created         1840.0 KB
+  idx_orders_status          1408.0 KB
+  users_wr                    192.0 KB
+  users_rowid                 184.0 KB
+  users_rowid_email           156.0 KB
+  sqlite_stat1                  4.0 KB
+  sqlite_schema                 4.0 KB
+  mixed                         4.0 KB
+  idx_mixed                     4.0 KB
+  => users_wr(表即索引) vs users_rowid(表)+users_rowid_email(索引)
+
+--- PLAN [rowid 表 UNIQUE 索引] ---
+SQL: SELECT name FROM users_rowid WHERE email = ?
+params: ('user123@example.com',)
+  SEARCH users_rowid USING INDEX users_rowid_email (email=?)
+
+--- PLAN [WITHOUT ROWID 主键] ---
+SQL: SELECT name FROM users_wr   WHERE email = ?
+params: ('user123@example.com',)
+  SEARCH users_wr USING PRIMARY KEY (email=?)
+  点查: rowid表+索引 0.0124 ms | WITHOUT ROWID 0.0118 ms
+  点查: rowid表+索引 0.0126 ms | WITHOUT ROWID 0.0117 ms
+  点查: rowid表+索引 0.0128 ms | WITHOUT ROWID 0.0118 ms
+
+--- PLAN [rowid表 range(经唯一索引)] ---
+SQL: SELECT email, name FROM users_rowid WHERE email BETWEEN ? AND ?
+params: ('user100@', 'user200@')
+  SEARCH users_rowid USING INDEX users_rowid_email (email>? AND email<?)
+
+--- PLAN [WITHOUT ROWID range(直接扫表)] ---
+SQL: SELECT email, name FROM users_wr   WHERE email BETWEEN ? AND ?
+params: ('user100@', 'user200@')
+  SEARCH users_wr USING PRIMARY KEY (email>? AND email<?)
+  range 查: rowid表+索引 0.475 ms | WITHOUT ROWID 0.429 ms
+
+结论方向:WITHOUT ROWID 主键表少一次'索引->rowid->表'的跳转,
+且省掉独立索引的存储;适合'自然主键 + 整行小'的表。
+
+==============================================================================
+实验 8:杂项验证(排序键中 rowid 的隐式参与 / DESC 索引)
+==============================================================================
+复合索引末尾隐式追加 rowid:(customer_id, status, created_at, id)
+
+--- PLAN [ORDER BY 落在索引第三列] ---
+SQL: SELECT id FROM orders
+             WHERE customer_id = ? AND status = ?
+             ORDER BY created_at
+params: (123, 'paid')
+  SEARCH orders USING COVERING INDEX idx_orders_cust_status_date (customer_id=? AND status=?)
+TIME [索引序免排序]:     0.014 ms/次  (rows=9, repeat=100)
+
+--- PLAN [ORDER BY 与索引序不一致] ---
+SQL: SELECT id FROM orders
+              WHERE customer_id = ?
+              ORDER BY created_at DESC, status
+params: (123,)
+  SEARCH orders USING COVERING INDEX idx_orders_cust_status_date (customer_id=?)
+  USE TEMP B-TREE FOR ORDER BY
+TIME [需 TEMP B-TREE]:     0.020 ms/次  (rows=21, repeat=100)
+
+DESC 索引可以反向满足另一方向的排序:
+
+--- PLAN [DESC 索引] ---
+SQL: SELECT id FROM orders WHERE customer_id = ?
+              ORDER BY created_at DESC
+params: (123,)
+  SEARCH orders USING COVERING INDEX idx_desc (customer_id=?)
+
+==============================================================================
+全部实验完成
+==============================================================================
+总耗时 6.05 s
+数据库保留在 D:\workspace\learning\experiments\sqlite-indexing\sqlite-indexing.db
+
+report 已写入 D:\workspace\learning\experiments\sqlite-indexing\report.txt

@@ -13,3 +13,12 @@ node_modules/
 # 系统杂项
 .DS_Store
 Thumbs.db
+
+# 嵌套实验仓库的 git 元数据不外发(内含本机身份与对象库)
+experiments/git-internals/lab/.git/
+
+# 实验仓库的 git 元数据仅本地保留(含本机身份与对象库,不外发)
+experiments/git-internals/lab-git-store/
+
+# 实验数据库体积大且可由脚本重建,不外发
+experiments/sqlite-indexing/*.db
