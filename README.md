@@ -22,6 +22,6 @@
 
 | 2026-09-06 | R2 | [正则表达式引擎](demos/regex-engine/)(回溯 vs Thompson NFA,ReDoS 实测) | Demo | 🚧 进行中 |
 | 2026-09-06 | R2 | [HTTP/1.1 vs HTTP/2 多路复用与队头阻塞](docs/http-multiplexing.md) | 文档+实验 | 🚧 进行中 |
-| 2026-09-06 | R2 | [Go GMP 调度器](docs/go-gmp-scheduler.md) | 文档+实验 | 🚧 进行中 |
+| 2026-09-06 | R2 | [Go GMP 调度器](docs/go-gmp-scheduler.md)(源码级:G/M/P 状态机、work-stealing、抢占) | 文档 | ✅ 全论断带 1.24.0 源码行号 · [实验脚本](experiments/go-gmp/)(待装 Go 复跑) |
 
 <!-- 新轮次从上方追加新行,交付完成后把 🚧 改为 ✅ -->
