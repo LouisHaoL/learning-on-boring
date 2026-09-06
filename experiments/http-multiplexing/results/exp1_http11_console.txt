@@ -1,0 +1,11 @@
+
+=== HTTP/1.1 策略对比  N=24 资源, 每个延迟 50ms, 5 轮取中位数 ===
+  serial_1conn: median   1222.4 ms   (min  1220.3 / max  1223.4)   理论下限≈1200ms
+        conn_6: median    207.2 ms   (min   206.6 / max   228.4)   理论下限≈200ms
+      conn_100: median     58.9 ms   (min    57.7 / max    70.4)   理论下限≈50ms
+
+=== HTTP/1.1 raw pipelining(单连接一次写出 24 个请求)===
+总耗时 1165.1 ms(与 serial_1conn 几乎相同 => 管线化没有解决队头阻塞)
+响应总字节 50646;前 1/4 字节在 304.1 ms 才到 —— 即使请求早已全部发出,响应仍被强制按请求顺序排队吐出
+
+结果已写入 results\http11_results.json

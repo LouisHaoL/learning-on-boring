@@ -1,0 +1,170 @@
+{
+  "alpn": "h2",
+  "stream_ids": [
+    1,
+    3,
+    5,
+    7,
+    9,
+    11
+  ],
+  "data_frame_switches": 5,
+  "timeline": [
+    {
+      "t_ms": 0.15,
+      "event": "SETTINGS",
+      "stream": 0,
+      "detail": "对端设置"
+    },
+    {
+      "t_ms": 0.22,
+      "event": "SETTINGS_ACK",
+      "stream": 0,
+      "detail": "设置协商完成"
+    },
+    {
+      "t_ms": 60.52,
+      "event": "HEADERS(+END_HEADERS)",
+      "stream": 5,
+      "detail": "响应头到达"
+    },
+    {
+      "t_ms": 60.64,
+      "event": "HEADERS(+END_HEADERS)",
+      "stream": 11,
+      "detail": "响应头到达"
+    },
+    {
+      "t_ms": 60.69,
+      "event": "DATA",
+      "stream": 5,
+      "detail": "512B (累计 512B)"
+    },
+    {
+      "t_ms": 60.72,
+      "event": "DATA",
+      "stream": 5,
+      "detail": "0B (累计 512B)"
+    },
+    {
+      "t_ms": 60.73,
+      "event": "END_STREAM",
+      "stream": 5,
+      "detail": "该 stream 完成"
+    },
+    {
+      "t_ms": 60.75,
+      "event": "DATA",
+      "stream": 11,
+      "detail": "512B (累计 512B)"
+    },
+    {
+      "t_ms": 60.77,
+      "event": "DATA",
+      "stream": 11,
+      "detail": "0B (累计 512B)"
+    },
+    {
+      "t_ms": 60.78,
+      "event": "END_STREAM",
+      "stream": 11,
+      "detail": "该 stream 完成"
+    },
+    {
+      "t_ms": 107.59,
+      "event": "HEADERS(+END_HEADERS)",
+      "stream": 3,
+      "detail": "响应头到达"
+    },
+    {
+      "t_ms": 107.67,
+      "event": "HEADERS(+END_HEADERS)",
+      "stream": 9,
+      "detail": "响应头到达"
+    },
+    {
+      "t_ms": 107.9,
+      "event": "DATA",
+      "stream": 3,
+      "detail": "512B (累计 512B)"
+    },
+    {
+      "t_ms": 107.94,
+      "event": "DATA",
+      "stream": 3,
+      "detail": "0B (累计 512B)"
+    },
+    {
+      "t_ms": 107.95,
+      "event": "END_STREAM",
+      "stream": 3,
+      "detail": "该 stream 完成"
+    },
+    {
+      "t_ms": 107.97,
+      "event": "DATA",
+      "stream": 9,
+      "detail": "512B (累计 512B)"
+    },
+    {
+      "t_ms": 107.99,
+      "event": "DATA",
+      "stream": 9,
+      "detail": "0B (累计 512B)"
+    },
+    {
+      "t_ms": 107.99,
+      "event": "END_STREAM",
+      "stream": 9,
+      "detail": "该 stream 完成"
+    },
+    {
+      "t_ms": 153.45,
+      "event": "HEADERS(+END_HEADERS)",
+      "stream": 1,
+      "detail": "响应头到达"
+    },
+    {
+      "t_ms": 153.59,
+      "event": "HEADERS(+END_HEADERS)",
+      "stream": 7,
+      "detail": "响应头到达"
+    },
+    {
+      "t_ms": 153.68,
+      "event": "DATA",
+      "stream": 1,
+      "detail": "512B (累计 512B)"
+    },
+    {
+      "t_ms": 153.74,
+      "event": "DATA",
+      "stream": 1,
+      "detail": "0B (累计 512B)"
+    },
+    {
+      "t_ms": 153.74,
+      "event": "END_STREAM",
+      "stream": 1,
+      "detail": "该 stream 完成"
+    },
+    {
+      "t_ms": 153.77,
+      "event": "DATA",
+      "stream": 7,
+      "detail": "512B (累计 512B)"
+    },
+    {
+      "t_ms": 153.79,
+      "event": "DATA",
+      "stream": 7,
+      "detail": "0B (累计 512B)"
+    },
+    {
+      "t_ms": 153.79,
+      "event": "END_STREAM",
+      "stream": 7,
+      "detail": "该 stream 完成"
+    }
+  ]
+}

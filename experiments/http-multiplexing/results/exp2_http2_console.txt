@@ -1,0 +1,9 @@
+
+=== HTTP/2 vs HTTP/1.1  N=24 资源, 每个延迟 50ms, 5 轮取中位数 ===
+  h2_1conn_multiplexed: median     73.2 ms   (min    70.2 / max    76.5)   [HTTP/2]
+        h1_single_conn: median   1480.5 ms   (min  1471.2 / max  1495.8)   [HTTP/1.1]
+          h1_six_conns: median    258.6 ms   (min   255.5 / max   259.8)   [HTTP/1.1]
+           h1_24_conns: median    103.3 ms   (min   101.9 / max   104.2)   [HTTP/1.1]
+
+解读:h2 用 1 条连接、24 个 stream 并行;h1.1 单连接被迫串行;h1.1 六连接 ≈ 浏览器策略(24 个资源要 4 个串行批次);24 条连接才追平 h2 单连接 —— 这正是 HTTP/2 的卖点:用一条连接换掉几十条。
+结果已写入 results\http2_vs_http11.json

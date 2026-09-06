@@ -1,0 +1,36 @@
+TLS ALPN 协商结果: h2
+
+已在单条连接上发出 6 个请求,stream id: [1, 3, 5, 7, 9, 11]
+
+   t(ms)  帧              stream  详情
+------------------------------------------------------------------------
+     0.1  SETTINGS            0  对端设置
+     0.2  SETTINGS_ACK        0  设置协商完成
+    60.5  HEADERS(+END_HEADERS)      5  响应头到达
+    60.6  HEADERS(+END_HEADERS)     11  响应头到达
+    60.7  DATA                5  512B (累计 512B)
+    60.7  DATA                5  0B (累计 512B)
+    60.7  END_STREAM          5  该 stream 完成
+    60.8  DATA               11  512B (累计 512B)
+    60.8  DATA               11  0B (累计 512B)
+    60.8  END_STREAM         11  该 stream 完成
+   107.6  HEADERS(+END_HEADERS)      3  响应头到达
+   107.7  HEADERS(+END_HEADERS)      9  响应头到达
+   107.9  DATA                3  512B (累计 512B)
+   107.9  DATA                3  0B (累计 512B)
+   107.9  END_STREAM          3  该 stream 完成
+   108.0  DATA                9  512B (累计 512B)
+   108.0  DATA                9  0B (累计 512B)
+   108.0  END_STREAM          9  该 stream 完成
+   153.5  HEADERS(+END_HEADERS)      1  响应头到达
+   153.6  HEADERS(+END_HEADERS)      7  响应头到达
+   153.7  DATA                1  512B (累计 512B)
+   153.7  DATA                1  0B (累计 512B)
+   153.7  END_STREAM          1  该 stream 完成
+   153.8  DATA                7  512B (累计 512B)
+   153.8  DATA                7  0B (累计 512B)
+   153.8  END_STREAM          7  该 stream 完成
+
+交错证据:12 个 DATA 帧中有 5 次 stream id 切换(HTTP/1.1 下同一连接的响应永远是 1,1,1,...,2,2,2,...,切换次数=0)
+DATA 帧来自 6 个不同 stream。
+结果已写入 results\http2_frames.json
