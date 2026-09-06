@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  body { margin: 16px; font: 14px/1.5 sans-serif; }
+  li { padding: 6px 0; border-bottom: 1px solid #eee; }
+  html.v-fixed li { content-visibility: auto; contain-intrinsic-size: 34px; }
+  html.v-wrap ul { content-visibility: auto; contain-intrinsic-size: auto 340000px; }
+</style>
+</head>
+<body>
+<h1>cv variants</h1>
+<ul id="list"></ul>
+<script>
+  const q = new URLSearchParams(location.search);
+  const n = Number(q.get('n') || 10000);
+  const v = q.get('v');
+  if (v) document.documentElement.classList.add('v-' + v);
+  const t0 = performance.now();
+  const frag = document.createDocumentFragment();
+  for (let i = 0; i < n; i++) {
+    const li = document.createElement('li');
+    li.textContent = 'item ' + i + ' — filler';
+    frag.appendChild(li);
+  }
+  document.getElementById('list').appendChild(frag);
+  document.body.offsetHeight;
+  window.__bench = { ms: +(performance.now() - t0).toFixed(1), v };
+</script>
+</body>
+</html>

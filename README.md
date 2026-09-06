@@ -25,7 +25,7 @@
 | 2026-09-06 | R2 | [Go GMP 调度器](docs/go-gmp-scheduler.md)(源码级:G/M/P 状态机、work-stealing、抢占) | 文档 | ✅ 全论断带 1.24.0 源码行号 · [实验脚本](experiments/go-gmp/)(待装 Go 复跑) |
 
 | 2026-09-06 | R3 | [简易数据库](demos/mini-db/)(WAL + B-tree 存储引擎) | Demo | 🚧 进行中 |
-| 2026-09-06 | R3 | [浏览器渲染管线与关键渲染路径](docs/browser-rendering-pipeline.md) | 文档 | 🚧 进行中 |
+| 2026-09-06 | R3 | [浏览器渲染管线与关键渲染路径](docs/browser-rendering-pipeline.md)(headless Chromium 实测:重排/脚本加载/content-visibility) | 文档+实验 | ✅ 4 组 CDP 实验 · [实验记录](experiments/browser-rendering/README.md) |
 | 2026-09-06 | R3 | [一致性哈希与分布式路由](demos/consistent-hashing/)(哈希环 + 虚拟节点,迁移率/负载均衡实测) | Demo | ✅ 9 组测试 · 迁移率 9.2% vs 取模 91% |
 
 <!-- 新轮次从上方追加新行,交付完成后把 🚧 改为 ✅ -->

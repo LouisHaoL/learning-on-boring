@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  /* 由 ?mode= 决定动画模式:lefttop(布局动画) vs transform(合成器动画) */
+  body { margin: 0; overflow: hidden; background: #fff; }
+  .box { position: absolute; width: 40px; height: 40px; background: #36c; font: 10px sans-serif; color: #fff; }
+  body.mode-lefttop  .box { animation: mvTL 2s linear infinite; }
+  body.mode-transform .box { animation: mvTR 2s linear infinite; }
+  body.mode-idle .box { }
+  /* left/top 每帧改变几何位置 -> 触发 Layout + Paint(以及后续 composite) */
+  @keyframes mvTL {
+    from { left: 0;    top: 0; }
+    50%  { left: 600px; top: 400px; }
+    to   { left: 0;    top: 0; }
+  }
+  /* transform 只改合成器可独立处理的属性 -> 理想情况下跳过 Layout/Paint */
+  @keyframes mvTR {
+    from { transform: translate(0, 0); }
+    50%  { transform: translate(600px, 400px); }
+    to   { transform: translate(0, 0); }
+  }
+</style>
+</head>
+<body>
+<script>
+  const q = new URLSearchParams(location.search);
+  const N = Number(q.get('n') || 400);
+  // 每个盒子里放一行文本,让 Layout/Paint 有真实成本
+  for (let i = 0; i < N; i++) {
+    const d = document.createElement('div');
+    d.className = 'box';
+    d.textContent = i;
+    d.style.left = (i % 16) * 80 + 'px';
+    d.style.top = Math.floor(i / 16) * 46 + 'px';
+    document.body.appendChild(d);
+  }
+  const mode = q.get('mode') === 'transform' ? 'mode-transform'
+    : q.get('mode') === 'idle' ? 'mode-idle' : 'mode-lefttop';
+  document.body.classList.add(mode);
+</script>
+</body>
+</html>

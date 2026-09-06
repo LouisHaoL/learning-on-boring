@@ -1,0 +1,222 @@
+{
+  "sync": [
+    {
+      "fcp": 1252,
+      "dcl": 1220.5,
+      "loadEvent": 1220.8,
+      "slowScriptDone": true
+    },
+    {
+      "fcp": 1228,
+      "dcl": 1221.2,
+      "loadEvent": 1221.4,
+      "slowScriptDone": true
+    },
+    {
+      "fcp": 1228,
+      "dcl": 1215.8,
+      "loadEvent": 1216.2,
+      "slowScriptDone": true
+    },
+    {
+      "fcp": 1256,
+      "dcl": 1228.3,
+      "loadEvent": 1229,
+      "slowScriptDone": true
+    },
+    {
+      "fcp": 1224,
+      "dcl": 1212.8,
+      "loadEvent": 1213.1,
+      "slowScriptDone": true
+    },
+    {
+      "fcp": 1224,
+      "dcl": 1212.2,
+      "loadEvent": 1212.4,
+      "slowScriptDone": true
+    },
+    {
+      "fcp": 1220,
+      "dcl": 1210.8,
+      "loadEvent": 1211,
+      "slowScriptDone": true
+    }
+  ],
+  "defer": [
+    {
+      "fcp": 32,
+      "dcl": 1224.1,
+      "loadEvent": 1224.2,
+      "slowScriptDone": true
+    },
+    {
+      "fcp": 20,
+      "dcl": 1210.1,
+      "loadEvent": 1210.3,
+      "slowScriptDone": true
+    },
+    {
+      "fcp": 32,
+      "dcl": 1220.8,
+      "loadEvent": 1220.9,
+      "slowScriptDone": true
+    },
+    {
+      "fcp": 20,
+      "dcl": 1222.1,
+      "loadEvent": 1222.2,
+      "slowScriptDone": true
+    },
+    {
+      "fcp": 24,
+      "dcl": 1210.4,
+      "loadEvent": 1210.5,
+      "slowScriptDone": true
+    },
+    {
+      "fcp": 24,
+      "dcl": 1222,
+      "loadEvent": 1222.1,
+      "slowScriptDone": true
+    },
+    {
+      "fcp": 24,
+      "dcl": 1221.4,
+      "loadEvent": 1221.5,
+      "slowScriptDone": true
+    }
+  ],
+  "async": [
+    {
+      "fcp": 28,
+      "dcl": 7.7,
+      "loadEvent": 1222.5,
+      "slowScriptDone": true
+    },
+    {
+      "fcp": 44,
+      "dcl": 8.7,
+      "loadEvent": 1222.1,
+      "slowScriptDone": true
+    },
+    {
+      "fcp": 20,
+      "dcl": 7.3,
+      "loadEvent": 1221.4,
+      "slowScriptDone": true
+    },
+    {
+      "fcp": 32,
+      "dcl": 10.5,
+      "loadEvent": 1221.1,
+      "slowScriptDone": true
+    },
+    {
+      "fcp": 32,
+      "dcl": 10.5,
+      "loadEvent": 1211.1,
+      "slowScriptDone": true
+    },
+    {
+      "fcp": 20,
+      "dcl": 8.5,
+      "loadEvent": 1210.1,
+      "slowScriptDone": true
+    },
+    {
+      "fcp": 28,
+      "dcl": 8.5,
+      "loadEvent": 1216.5,
+      "slowScriptDone": true
+    }
+  ],
+  "bottom": [
+    {
+      "fcp": 24,
+      "dcl": 1216.8,
+      "loadEvent": 1217.1,
+      "slowScriptDone": true
+    },
+    {
+      "fcp": 24,
+      "dcl": 1211,
+      "loadEvent": 1211.3,
+      "slowScriptDone": true
+    },
+    {
+      "fcp": 20,
+      "dcl": 1222.3,
+      "loadEvent": 1222.5,
+      "slowScriptDone": true
+    },
+    {
+      "fcp": 24,
+      "dcl": 1207.6,
+      "loadEvent": 1207.8,
+      "slowScriptDone": true
+    },
+    {
+      "fcp": 20,
+      "dcl": 1210.9,
+      "loadEvent": 1211.1,
+      "slowScriptDone": true
+    },
+    {
+      "fcp": 20,
+      "dcl": 1221.6,
+      "loadEvent": 1221.9,
+      "slowScriptDone": true
+    },
+    {
+      "fcp": 20,
+      "dcl": 1208.5,
+      "loadEvent": 1208.7,
+      "slowScriptDone": true
+    }
+  ],
+  "none": [
+    {
+      "fcp": 24,
+      "dcl": 6,
+      "loadEvent": 6.2,
+      "slowScriptDone": false
+    },
+    {
+      "fcp": 28,
+      "dcl": 7.3,
+      "loadEvent": 7.5,
+      "slowScriptDone": false
+    },
+    {
+      "fcp": 28,
+      "dcl": 7.4,
+      "loadEvent": 7.5,
+      "slowScriptDone": false
+    },
+    {
+      "fcp": 32,
+      "dcl": 6.7,
+      "loadEvent": 6.9,
+      "slowScriptDone": false
+    },
+    {
+      "fcp": 32,
+      "dcl": 7.7,
+      "loadEvent": 7.9,
+      "slowScriptDone": false
+    },
+    {
+      "fcp": 24,
+      "dcl": 6,
+      "loadEvent": 6.3,
+      "slowScriptDone": false
+    },
+    {
+      "fcp": 32,
+      "dcl": 9.1,
+      "loadEvent": 9.3,
+      "slowScriptDone": false
+    }
+  ]
+}

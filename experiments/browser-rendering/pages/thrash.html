@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  body { margin: 0; }
+  .box { position: absolute; left: 0; width: 30px; height: 26px; background: #484; font: 9px sans-serif; }
+</style>
+</head>
+<body>
+<script>
+  const q = new URLSearchParams(location.search);
+  const mode = q.get('mode') || 'idle';
+  const N = Number(q.get('n') || 200);
+  const boxes = [];
+  for (let i = 0; i < N; i++) {
+    const d = document.createElement('div');
+    d.className = 'box';
+    d.textContent = i;
+    d.style.top = Math.floor(i / 20) * 30 + 'px';
+    document.body.appendChild(d);
+    boxes.push(d);
+  }
+  // thrash:每帧对每个元素"写 left -> 立刻读 getBoundingClientRect(强制同步布局)"
+  // clean :每帧只写 left,不读布局(布局推迟到该帧真正渲染时,且每帧只做一次)
+  // idle  :什么都不做(基线)
+  let x = 0;
+  function frame() {
+    if (mode === 'thrash') {
+      for (const b of boxes) { b.style.left = x + 'px'; b.getBoundingClientRect(); }
+    } else if (mode === 'clean') {
+      for (const b of boxes) { b.style.left = x + 'px'; }
+    }
+    x = (x + 1) % 400;
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+</script>
+</body>
+</html>

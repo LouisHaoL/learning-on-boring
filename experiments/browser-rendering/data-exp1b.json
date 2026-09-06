@@ -1,0 +1,54 @@
+{
+  "n2000-lefttop": [
+    {
+      "LayoutCount": 120,
+      "RecalcStyleCount": 120,
+      "LayoutDuration": 0.16,
+      "RecalcStyleDuration": 0.68,
+      "ScriptDuration": 0,
+      "TaskDuration": 2.02
+    },
+    {
+      "LayoutCount": 120,
+      "RecalcStyleCount": 120,
+      "LayoutDuration": 0.15,
+      "RecalcStyleDuration": 0.65,
+      "ScriptDuration": 0,
+      "TaskDuration": 2.01
+    },
+    {
+      "LayoutCount": 120,
+      "RecalcStyleCount": 120,
+      "LayoutDuration": 0.16,
+      "RecalcStyleDuration": 0.66,
+      "ScriptDuration": 0,
+      "TaskDuration": 2.02
+    }
+  ],
+  "n2000-transform": [
+    {
+      "LayoutCount": 0,
+      "RecalcStyleCount": 0,
+      "LayoutDuration": 0,
+      "RecalcStyleDuration": 0,
+      "ScriptDuration": 0,
+      "TaskDuration": 0
+    },
+    {
+      "LayoutCount": 0,
+      "RecalcStyleCount": 0,
+      "LayoutDuration": 0,
+      "RecalcStyleDuration": 0,
+      "ScriptDuration": 0,
+      "TaskDuration": 0.01
+    },
+    {
+      "LayoutCount": 0,
+      "RecalcStyleCount": 0,
+      "LayoutDuration": 0,
+      "RecalcStyleDuration": 0,
+      "ScriptDuration": 0,
+      "TaskDuration": 0.16
+    }
+  ]
+}

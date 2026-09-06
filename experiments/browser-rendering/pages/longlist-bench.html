@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  body { margin: 16px; font: 14px/1.5 sans-serif; }
+  li { padding: 6px 0; border-bottom: 1px solid #eee; }
+  /* ?mode=cv 时启用 content-visibility: auto */
+  html.cv li { content-visibility: auto; contain-intrinsic-size: auto 34px; }
+</style>
+</head>
+<body>
+<h1>insert + layout bench</h1>
+<ul id="list"></ul>
+<script>
+  const q = new URLSearchParams(location.search);
+  const n = Number(q.get('n') || 10000);
+  if (q.get('mode') === 'cv') document.documentElement.classList.add('cv');
+
+  // 计时:插入 n 个节点 + 强制一次完整布局(body 高度读取)
+  // 插入本身只是 DOM 操作;真实布局被推迟到第一次几何读取(offsetHeight),
+  // 因此 t1-t0 ≈ DOM 插入 + style recalc + layout 的总和。
+  const t0 = performance.now();
+  const frag = document.createDocumentFragment();
+  for (let i = 0; i < n; i++) {
+    const li = document.createElement('li');
+    li.textContent = 'item ' + i + ' — some filler text to give each row real layout cost.';
+    frag.appendChild(li);
+  }
+  document.getElementById('list').appendChild(frag);
+  const h = document.body.offsetHeight; // 强制同步布局
+  window.__bench = { insert_and_layout_ms: +(performance.now() - t0).toFixed(1), body_height: h, n, mode: q.get('mode') };
+</script>
+</body>
+</html>

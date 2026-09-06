@@ -1,0 +1,28 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  body { margin: 16px; font: 14px/1.5 sans-serif; }
+  li { padding: 6px 0; border-bottom: 1px solid #eee; }
+  /* 由脚本给 <html> 加 class=cv 启用 content-visibility */
+  html.cv li { content-visibility: auto; contain-intrinsic-size: auto 34px; }
+</style>
+</head>
+<body>
+<h1>long list</h1>
+<ul id="list"></ul>
+<script>
+  const n = 10000;
+  const frag = document.createDocumentFragment();
+  for (let i = 0; i < n; i++) {
+    const li = document.createElement('li');
+    li.textContent = 'item ' + i + ' — some filler text to give each row real layout cost.';
+    frag.appendChild(li);
+  }
+  document.getElementById('list').appendChild(frag);
+  const q = new URLSearchParams(location.search);
+  if (q.get('mode') === 'cv' || location.hash === '#cv') document.documentElement.classList.add('cv');
+</script>
+</body>
+</html>
