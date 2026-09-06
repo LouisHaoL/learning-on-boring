@@ -25,3 +25,4 @@ experiments/sqlite-indexing/*.db
 
 # 一次性自签证书不外发(README 有生成命令)
 experiments/http-multiplexing/certs/
+.claude/
