@@ -11,7 +11,7 @@
 
 本笔记的信息来源分四层,可信度递减:
 
-1. **原始文献与系统综述**:Borbély 双过程模型(Borbély 1982, Am J Physiol;2016 年更新版综述)、Rasch & Born 记忆巩固综述(Physiological Reviews, 2013)、Czeisler 组的光照-节律实验系列(Science 1999; J Physiol 系列等)、Depner 等周末补觉 RCT(Current Biology, 2019)、Hu 等 TMR 元分析(2020)、Bauducco 等/Shechter 等关于睡前光照的元分析。
+1. **原始文献与系统综述**:Borbély 双过程模型(Borbély 1982, Human Neurobiology;2016 年更新版综述)【勘误 R6:原误作 "Am J Physiol",系与 Daan/Borbély/Beersma 1984 混淆;1982 两过程模型原文刊于 Human Neurobiology,与本节末参考文献一致】、Rasch & Born 记忆巩固综述(Physiological Reviews, 2013)、Czeisler 组的光照-节律实验系列(Science 1999; J Physiol 系列等)、Depner 等周末补觉 RCT(Current Biology, 2019)、Hu 等 TMR 元分析(2020)、Bauducco 等/Shechter 等关于睡前光照的元分析。
 2. **权威机构共识**:AASM/SRS 成人睡眠时长共识(Watson 2015,≥7 小时)、美国国家睡眠基金会时长建议(Hirshkowitz 2015)、IARC 对「夜班轮值」的 2A 类致癌物评级、CDC 睡眠监测数据。
 3. **学界对科普书的事实核查**:Guzey 2019 对《Why We Sleep》的系统批评、阿姆斯特丹大学 Wagenmakers 组(Sarafoglou 博士论文,2023)对畅销科普书引用实践的检验、BBC More or Less 的追问。**注**:任务原文提到的「de Vries 2021 系统批评」经多轮检索未能定位到确切文献(检索到的同名文献均与睡眠无关),故本节以可核实的 Guzey(2019)与 UvA 学派核查工作为准;若后续找到该文献,可再补录。
 4. **企业调查数据**:微软 Work Trend Index 等上班族睡眠/加班自报调查。此类为**自愿样本+自报**,存在选择偏差与社会期望偏差,只能作氛围参考,不作为流行病学证据。
@@ -261,7 +261,7 @@ Matthew Walker(UC Berkeley 睡眠科学家)的《Why We Sleep》(2017)是现象�
 
 ---
 
-## 7.5 附:一条把争议读成方法论训练的路径
+## 7.6 附:一条把争议读成方法论训练的路径【勘误 R6:原编号 7.5 与上一节重复,顺延为 7.6】
 
 如果只带走一件事:读《Why We Sleep》这类书时,准备两支笔——一支标「机制叙述」(大体可信,值得吸收),一支标「人群风险与惊人数字」(默认存疑,逐条回溯)。Guzey 之文最大的价值不是打倒一本书,而是示范了**一个外行如何用脚注+原始文献做系统核查**;Sarafoglou 组的贡献是把个案上升为「流行科普的引用病理学」。两者加起来,比任何一本更好的睡眠科普书都更值得学。
 
