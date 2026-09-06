@@ -28,8 +28,8 @@
 | 2026-09-06 | R3 | [浏览器渲染管线与关键渲染路径](docs/browser-rendering-pipeline.md)(headless Chromium 实测:重排/脚本加载/content-visibility) | 文档+实验 | ✅ 4 组 CDP 实验 · [实验记录](experiments/browser-rendering/README.md) |
 | 2026-09-06 | R3 | [一致性哈希与分布式路由](demos/consistent-hashing/)(哈希环 + 虚拟节点,迁移率/负载均衡实测) | Demo | ✅ 9 组测试 · 迁移率 9.2% vs 取模 91% |
 
-| 2026-09-06 | R4 | [TCP 拥塞控制](docs/tcp-congestion-control.md)(Reno/CUBIC/BBR + 拥塞窗口模拟器) | 文档+Demo | 🚧 进行中 |
-| 2026-09-06 | R4 | [Ripple 字节码 VM](demos/ripple-vm/)(把 R1 的树遍历解释器升级为字节码执行) | Demo | 🚧 进行中 |
+| 2026-09-06 | R4 | [TCP 拥塞控制](docs/tcp-congestion-control.md)(Reno/CUBIC/BBR 演进,RFC 溯源) | 文档 | 🚧 进行中 |
+| 2026-09-06 | R4 | [IEEE 754 浮点数](docs/ieee754.md)(位布局、0.1+0.2 机制链、舍入与相等性) | 文档+验证实验 | 🚧 进行中 |
 | 2026-09-06 | R4 | [Git rebase 与 merge 内部机制](docs/git-rebase-internals.md) | 文档+实验 | 🚧 进行中 |
 
 <!-- 新轮次从上方追加新行,交付完成后把 🚧 改为 ✅ -->
