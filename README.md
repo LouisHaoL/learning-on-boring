@@ -28,7 +28,7 @@
 | 2026-09-06 | R3 | [浏览器渲染管线与关键渲染路径](docs/browser-rendering-pipeline.md)(headless Chromium 实测:重排/脚本加载/content-visibility) | 文档+实验 | ✅ 4 组 CDP 实验 · [实验记录](experiments/browser-rendering/README.md) |
 | 2026-09-06 | R3 | [一致性哈希与分布式路由](demos/consistent-hashing/)(哈希环 + 虚拟节点,迁移率/负载均衡实测) | Demo | ✅ 9 组测试 · 迁移率 9.2% vs 取模 91% |
 
-| 2026-09-06 | R4 | [地图投影的科学、历史与政治](docs/map-projections.md) | 知识研究 | 🚧 进行中 |
+| 2026-09-06 | R4 | [地图投影的科学、历史与政治](docs/map-projections.md)(高斯绝妙定理、墨卡托、Peters 之争、Web 墨卡托) | 知识研究 | ✅ 350 行 · 数值表全部复算 |
 | 2026-09-06 | R4 | [货币简史:从贝壳到法币](docs/history-of-money.md)(货币本质之争、交子、金本位兴衰、三大恶性通胀机制) | 知识研究 | ✅ 406 行 · 多来源交叉核验 |
 | 2026-09-06 | R4 | [十二平均律:数学与音乐的四百年](docs/equal-temperament.md)(毕达哥拉斯音差、朱载堉与 Stevin、巴赫澄清) | 知识研究 | ✅ 432 行 · 全数值手算可验证 |
 
