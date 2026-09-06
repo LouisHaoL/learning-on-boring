@@ -1,0 +1,15 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Node
+node_modules/
+
+# SQLite 临时文件(保留 .db 本体作为实验数据)
+*.db-shm
+*.db-wal
+
+# 系统杂项
+.DS_Store
+Thumbs.db
