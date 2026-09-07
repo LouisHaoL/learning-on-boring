@@ -202,15 +202,31 @@
 - **知识轨道**:香料史 agent 纠正了出题方两处错误(1656 Poivre 年代错、Jublains 沉船无据,改用 Berenike/Comacchio 等同行评审证据)——诚实纠错行为保留;地铁史驳倒"马粪预言"都市传说(泰晤士报原文从未被找到,2018 年论文否认归属),同时保留真实问题层。
 - **制度变更(2026-09-07 用户指示)**:回顾自本轮后**降级为审校轮**——只抓错漏回填勘误,不再宣称对模型"记忆"有巩固作用(检索练习的拟人化部分废弃);间隔排期简化为"错多/改动大者优先再审"。知识轨道自 R18 起**从自由探索改为论文解读**(口语化解读各领域真实论文,交付 `docs/papers/`,例子按需)。
 
-## 第 18 轮(2026-09-07,🚧 进行中)
+## 第 18 轮(2026-09-07,✅ 已完成)
 
 > 新形式首轮:2 篇论文解读 + 1 个审校位。审校位按新口径:纯勘误质检,不谈巩固率。
+> 论文解读自本轮起以 **HTML 阅读页交付**(md 为源文件,html 自包含渲染,用户 2026-09-07 指示)。
 
 | # | 方向 | 交付物 | 位置 |
 |---|------|--------|------|
-| 1 | 论文解读:Hardin《The Tragedy of the Commons》(Science 1968) | 口语化解读 | `docs/papers/tragedy-of-the-commons.md` |
-| 2 | 论文解读:Milgram《Behavioral Study of Obedience》(1963) | 口语化解读 | `docs/papers/milgram-obedience.md` |
+| 1 | 论文解读:Hardin《The Tragedy of the Commons》(Science 1968) | 口语化解读 | `docs/papers/tragedy-of-the-commons.md` + `.html` |
+| 2 | 论文解读:Milgram《Behavioral Study of Obedience》(1963) | 口语化解读 | `docs/papers/milgram-obedience.md` + `.html` |
 | 3 | 审校位:R5 三篇第二次审校(学习科学/熵/经度问题),重点复测 R8 勘误回填 | 审校记录 + 勘误回填 | `experiments/spaced-review/R18/` |
+
+**要点**
+- **论文解读落地质量**:公地悲剧篇拿到 JSTOR 扫描版,无文本层就用 pypdfium2 渲染逐页读图,引文对照扫描页核验;Milgram 篇发现"代理状态"一词 1963 原文不存在(1974 理论),按两层分写。两篇均含误解澄清与后续批评(Ostrom 三路线之争;Perry 档案/Burger 2009/IRB 脉络)。
+- **审校**:36 问 33✅3🟡0❌;R8 三处勘误复测全中但如实判为热读复现,不计记忆证据——新规"出题前禁读历史记录全文"的必要性再次被证实。经度篇新勘误 2 处(Association 四舰括注缺一舰;年表 1905/06 行错位)。存疑"13 Ann. c.14"经查证撤回(与 "12 Ann. St. 2, c. 15" 双引法并存,原文无误);其引法口径瑕疵**裁定不回改**,按"仅记录不改动"惯例在 R18 记录留痕。R5 记录层 3 处错误(Dunlosky 分层笔误等)登记不回改。
+- **登记**:R5 三刷推荐 R24;若 R19 起启动"日历间隔 ≥3 天"实验则顺延为实验批次。R19 流程改进:出题只读上游记录的结构化摘要;勘误复测改"给点位不给内容"。
+
+## 第 19 轮(2026-09-07,🚧 进行中)
+
+> 审校位严判自本轮全面生效(R15 政策);流程改进按 R18 建议:出题阶段只读结构化摘要、勘误复测给点位不给内容。
+
+| # | 方向 | 交付物 | 位置 |
+|---|------|--------|------|
+| 1 | 论文解读:Watson & Crick《Molecular Structure of Nucleic Acids》(Nature 1953) | 口语化解读 | `docs/papers/dna-structure.md` + `.html` |
+| 2 | 论文解读:Kahneman & Tversky《Prospect Theory》(Econometrica 1979) | 口语化解读 | `docs/papers/prospect-theory.md` + `.html` |
+| 3 | 审校位:R8 两篇第三轮审校(面包史/保险史),严判全面生效 | 审校记录 + 勘误回填 | `experiments/spaced-review/R19/` |
 
 ## 第 7 轮(2026-09-06,✅ 已完成)
 
