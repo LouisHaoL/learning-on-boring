@@ -1,0 +1,857 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>服从实验 · Milgram (1963) 解读</title>
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #f6f4f0;
+    --content-bg: #fefdfa;
+    --text: #2a2925;
+    --text-soft: #5b5951;
+    --heading: #1d1c19;
+    --border: #dcd7cb;
+    --border-strong: #c8c1b0;
+    --accent: #5f5a8a;
+    --code-bg: #eeeadd;
+
+    --quote-bg: #f1eee5;
+    --quote-border: #8a84b0;
+
+    --en-text: #54507a;
+
+    --b-first-bg: #e3f2e3;  --b-first-fg: #1e6b34;  --b-first-bd: #9ccfa6;
+    --b-strong-bg: #e2eefb; --b-strong-fg: #1c5a96; --b-strong-bd: #9cc4e8;
+    --b-mid-bg: #faf0d3;    --b-mid-fg: #8a6a10;    --b-mid-bd: #e4cf8e;
+    --b-disp-bg: #fdeada;   --b-disp-fg: #b05413;   --b-disp-bd: #f0bd8e;
+    --b-d-bg: #ebebea;      --b-d-fg: #63635f;      --b-d-bd: #c2c2be;
+
+    --warn-bg: #fdeaea; --warn-border: #d9534f; --warn-fg: #a03030;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #181714;
+      --content-bg: #1f1e1a;
+      --text: #d7d3c7;
+      --text-soft: #a2a094;
+      --heading: #ebe7db;
+      --border: #393730;
+      --border-strong: #4b483e;
+      --accent: #a9a3d6;
+      --code-bg: #292720;
+
+      --quote-bg: #25231d;
+      --quote-border: #7a75a0;
+
+      --en-text: #b6b1da;
+
+      --b-first-bg: #1d3322;  --b-first-fg: #8fd69f;  --b-first-bd: #386043;
+      --b-strong-bg: #1c2c40; --b-strong-fg: #8fbdec; --b-strong-bd: #2f4d70;
+      --b-mid-bg: #38301a;    --b-mid-fg: #e3c665;    --b-mid-bd: #5c4f24;
+      --b-disp-bg: #3c2a17;   --b-disp-fg: #eda15f;   --b-disp-bd: #64431f;
+      --b-d-bg: #2b2b29;      --b-d-fg: #a5a5a0;      --b-d-bd: #454542;
+
+      --warn-bg: #3a2020; --warn-border: #c06060; --warn-fg: #e8a0a0;
+    }
+  }
+  @media (prefers-color-scheme: light) {
+    :root[data-theme="dark"] {
+      --bg: #181714;
+      --content-bg: #1f1e1a;
+      --text: #d7d3c7;
+      --text-soft: #a2a094;
+      --heading: #ebe7db;
+      --border: #393730;
+      --border-strong: #4b483e;
+      --accent: #a9a3d6;
+      --code-bg: #292720;
+      --quote-bg: #25231d;
+      --quote-border: #7a75a0;
+      --en-text: #b6b1da;
+      --b-first-bg: #1d3322;  --b-first-fg: #8fd69f;  --b-first-bd: #386043;
+      --b-strong-bg: #1c2c40; --b-strong-fg: #8fbdec; --b-strong-bd: #2f4d70;
+      --b-mid-bg: #38301a;    --b-mid-fg: #e3c665;    --b-mid-bd: #5c4f24;
+      --b-disp-bg: #3c2a17;   --b-disp-fg: #eda15f;   --b-disp-bd: #64431f;
+      --b-d-bg: #2b2b29;      --b-d-fg: #a5a5a0;      --b-d-bd: #454542;
+      --warn-bg: #3a2020; --warn-border: #c06060; --warn-fg: #e8a0a0;
+    }
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    padding: 0 1rem 4rem;
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: "Source Han Serif SC", "Noto Serif CJK SC", Georgia, "Times New Roman",
+                 "Songti SC", SimSun, "Microsoft YaHei", "PingFang SC", sans-serif;
+    font-size: 17px;
+    line-height: 1.85;
+  }
+
+  main {
+    max-width: 42rem;
+    margin: 0 auto;
+    background-color: var(--content-bg);
+    padding: 2.5rem 2.2rem 3rem;
+    border-left: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+  }
+
+  h1, h2, h3, h4 {
+    color: var(--heading);
+    line-height: 1.4;
+    font-weight: 700;
+  }
+  h1 {
+    font-size: 1.62rem;
+    margin: 0 0 0.6rem;
+    letter-spacing: 0.02em;
+  }
+  h2 {
+    font-size: 1.28rem;
+    margin: 2.8rem 0 1rem;
+    padding-bottom: 0.35rem;
+    border-bottom: 2px solid var(--border-strong);
+    scroll-margin-top: 1.5rem;
+  }
+  h3 {
+    font-size: 1.07rem;
+    margin: 2rem 0 0.8rem;
+    color: var(--accent);
+    scroll-margin-top: 1.5rem;
+  }
+  h4 { font-size: 1rem; margin: 1.5rem 0 0.6rem; }
+
+  p { margin: 0.9rem 0; }
+
+  ul, ol { margin: 0.9rem 0; padding-left: 1.6rem; }
+  li { margin: 0.45rem 0; }
+  li > ul, li > ol { margin: 0.35rem 0; }
+
+  strong { color: var(--heading); }
+
+  hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 2.5rem 0;
+  }
+
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* ---- header area ---- */
+  .doc-header { border-bottom: 3px double var(--border-strong); padding-bottom: 1.6rem; }
+  .doc-lede {
+    color: var(--text-soft);
+    font-size: 0.95rem;
+    margin-top: 0.8rem;
+  }
+  .doc-lede em { font-style: italic; }
+
+  /* ---- archive card ---- */
+  .archive-card {
+    margin: 1.8rem 0 0;
+    border: 1px solid var(--border-strong);
+    border-radius: 8px;
+    background: var(--quote-bg);
+    overflow: hidden;
+  }
+  .archive-card .card-head {
+    margin: 0;
+    padding: 0.6rem 1.1rem;
+    font-size: 0.98rem;
+    font-weight: 700;
+    color: var(--heading);
+    border-bottom: 1px solid var(--border);
+    background: var(--code-bg);
+  }
+  .archive-card .card-body { padding: 0.4rem 1.1rem 0.7rem; }
+  .archive-card dl { margin: 0.4rem 0; }
+  .archive-card dt {
+    font-weight: 700;
+    color: var(--heading);
+    font-size: 0.9rem;
+    margin-top: 0.55rem;
+  }
+  .archive-card dd { margin: 0.1rem 0 0 0; font-size: 0.95rem; }
+  .archive-card ul { margin: 0.2rem 0; padding-left: 1.3rem; font-size: 0.93rem; }
+  .archive-card li { margin: 0.25rem 0; }
+
+  /* ---- TOC ---- */
+  nav.toc {
+    margin: 1.6rem 0 0;
+    border: 1px dashed var(--border-strong);
+    border-radius: 8px;
+    padding: 1rem 1.3rem 0.8rem;
+  }
+  nav.toc .toc-title {
+    font-weight: 700;
+    color: var(--heading);
+    font-size: 0.98rem;
+    margin-bottom: 0.4rem;
+  }
+  nav.toc ol {
+    margin: 0;
+    padding-left: 1.4rem;
+    font-size: 0.94rem;
+    columns: 2;
+    column-gap: 2rem;
+  }
+  nav.toc li { margin: 0.2rem 0; break-inside: avoid; }
+  @media (max-width: 560px) { nav.toc ol { columns: 1; } }
+
+  /* ---- blockquotes ---- */
+  blockquote {
+    margin: 1.2rem 0;
+    padding: 0.7rem 1.2rem;
+    border-left: 4px solid var(--quote-border);
+    background: var(--quote-bg);
+    border-radius: 0 6px 6px 0;
+    color: var(--text);
+  }
+  blockquote p { margin: 0.4rem 0; }
+  /* 引用英文原文:衬线斜体感,颜色与中文区分 */
+  blockquote.en {
+    font-family: Georgia, "Times New Roman", serif;
+    font-style: italic;
+    color: var(--en-text);
+    font-size: 0.97em;
+  }
+
+  /* ---- tables ---- */
+  .table-wrap { overflow-x: auto; margin: 1.2rem 0; }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 0.92rem;
+    line-height: 1.6;
+  }
+  th, td {
+    border: 1px solid var(--border);
+    padding: 0.45rem 0.75rem;
+    text-align: left;
+    vertical-align: top;
+  }
+  th {
+    background: var(--code-bg);
+    color: var(--heading);
+    white-space: nowrap;
+    font-weight: 700;
+  }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  tbody tr:nth-child(even) { background: color-mix(in srgb, var(--quote-bg) 55%, transparent); }
+  tfoot td { font-weight: 700; border-top: 2px solid var(--border-strong); background: var(--code-bg); }
+  .table-caption {
+    font-size: 0.85rem;
+    color: var(--text-soft);
+    margin: -0.6rem 0 1.2rem;
+  }
+
+  /* ---- evidence badges ---- */
+  .tag {
+    display: inline-block;
+    font-size: 0.72rem;
+    line-height: 1.5;
+    font-weight: 700;
+    font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+    padding: 0.05em 0.55em;
+    border-radius: 999px;
+    border: 1px solid;
+    vertical-align: 0.12em;
+    white-space: nowrap;
+  }
+  .t-first  { background: var(--b-first-bg);  color: var(--b-first-fg);  border-color: var(--b-first-bd); }
+  .t-strong { background: var(--b-strong-bg); color: var(--b-strong-fg); border-color: var(--b-strong-bd); }
+  .t-mid    { background: var(--b-mid-bg);    color: var(--b-mid-fg);    border-color: var(--b-mid-bd); }
+  .t-disp   { background: var(--b-disp-bg);   color: var(--b-disp-fg);   border-color: var(--b-disp-bd); }
+  .t-d      { background: var(--b-d-bg);      color: var(--b-d-fg);      border-color: var(--b-d-bd); }
+
+  .grade-list > li > .tag:first-child { margin-right: 0.35rem; }
+
+  /* ---- 勘误警示块(如有) ---- */
+  .erratum {
+    margin: 1.2rem 0;
+    padding: 0.7rem 1.2rem;
+    border-left: 4px solid var(--warn-border);
+    background: var(--warn-bg);
+    border-radius: 0 6px 6px 0;
+    color: var(--warn-fg);
+  }
+  .erratum p { margin: 0.4rem 0; }
+
+  code {
+    background: var(--code-bg);
+    padding: 0.1em 0.35em;
+    border-radius: 4px;
+    font-size: 0.88em;
+    font-family: Consolas, "Courier New", monospace;
+  }
+
+  @media (max-width: 480px) {
+    main { padding: 1.6rem 1.1rem 2.4rem; }
+    body { font-size: 16px; }
+  }
+</style>
+</head>
+<body>
+<main>
+
+<div class="doc-header">
+  <h1>米尔格拉姆服从实验:普通人是怎么"只是执行命令"的</h1>
+  <p class="doc-lede">论文解读 / 2026-09 · 解读对象:Stanley Milgram, "Behavioral Study of Obedience", <em>Journal of Abnormal and Social Psychology</em>, 1963, Vol. 67(4), pp. 371–378.</p>
+
+  <section class="archive-card">
+    <div class="card-head">论文档案</div>
+    <div class="card-body">
+      <dl>
+        <dt>题目</dt>
+        <dd>Behavioral Study of Obedience(服从的行为研究)。</dd>
+        <dt>作者</dt>
+        <dd>Stanley Milgram,耶鲁大学。</dd>
+        <dt>发表</dt>
+        <dd>Journal of Abnormal and Social Psychology, 1963, Vol. 67, No. 4, pp. 371–378<span class="tag t-first">一手</span>。</dd>
+        <dt>证据分级约定</dt>
+        <dd>全文行内标注,沿用本仓库体系:</dd>
+      </dl>
+      <ul>
+        <li><span class="tag t-first">一手</span>本次已读到原文 PDF 全文并逐段核对的内容(可复核)</li>
+        <li><span class="tag t-strong">强</span>权威工具书 / 官方机构 / 多个独立来源一致</li>
+        <li><span class="tag t-mid">中等</span>普遍转述或单一可信来源,方向可信,数字留余地</li>
+        <li><span class="tag t-disp">争议</span>口径分歧明显或方法论受质疑</li>
+        <li><span class="tag t-d">D</span>本次未能溯源到原文,存疑待考</li>
+      </ul>
+    </div>
+  </section>
+
+  <nav class="toc">
+    <div class="toc-title">目录</div>
+    <ol>
+      <li><a href="#sec-method">研究方法:我怎么找到并读到这篇论文</a></li>
+      <li><a href="#sec-archive">论文档案</a></li>
+      <li><a href="#sec-question">它在回答什么问题</a></li>
+      <li><a href="#sec-reading">口语化解读</a></li>
+      <li><a href="#sec-example">简单例子:一场公司里的小步滑坡</a></li>
+      <li><a href="#sec-grades">证据分级</a></li>
+      <li><a href="#sec-critique">后续批评与复制</a></li>
+      <li><a href="#sec-misconceptions">误解澄清</a></li>
+      <li><a href="#sec-closing">一句话收束</a></li>
+      <li><a href="#sec-refs">参考</a></li>
+    </ol>
+  </nav>
+</div>
+
+<h2 id="sec-method">研究方法:我怎么找到并读到这篇论文</h2>
+<ol>
+  <li><strong>原文获取</strong>
+    <ul>
+      <li>用 TinyFish search 搜 "Milgram 1963 Behavioral Study of Obedience PDF full text",命中多个公开 PDF(psychnet 官方记录页、researchgate、多个教学镜像)。</li>
+      <li>取第一个命中(demenzemedicinagenerale.net 的 MilgramOriginalWork.pdf)用 curl 下载,本地逐页读完。</li>
+      <li><strong>读到的是全文 9 页</strong>:摘要、引言、General Procedure、Related Studies、Method、Results、Discussion、References,不是节选。</li>
+      <li>文中所有标<span class="tag t-first">一手</span>的数字和引文都出自这份 PDF,可逐字复核。</li>
+    </ul>
+  </li>
+  <li><strong>版本鉴别</strong>
+    <ul>
+      <li>该 PDF 是重排版(单栏重排、独立标题页),不是期刊扫描版。</li>
+      <li>核对要点:页码范围 371–378、卷期 67(4)、30 档电压 15–450V、40 名被试 26 人到底——与 APA PsycNet 官方记录、scispace 条目一致<span class="tag t-first">一手+强</span>。</li>
+      <li>收稿日 1961-12-27、删节重投日 1962-07-27,出自原文脚注 2<span class="tag t-first">一手</span>。</li>
+    </ul>
+  </li>
+  <li><strong>交叉核实(二手侧)</strong>
+    <ul>
+      <li>Burger 2009 复制的核心数字(150V 截断、基准条件 70% vs 米尔格拉姆 82.5%、模型拒绝条件 63.3%):APA 官网原文 PDF、PubMed 摘要、EurekAlert 新闻稿,三处一致<span class="tag t-strong">强</span>。</li>
+      <li>Gina Perry《Behind the Shock Machine》的档案发现:NPR 2013-08-28 专访、APA 官网书评访谈、LA Review of Books 2013 书评,三处叙事一致;<strong>原书未读</strong>,具体档案细节按<span class="tag t-mid">中等</span>标注。</li>
+      <li>伦理制度脉络(National Research Act 1974、Belmont Report 1979):多源一致的心理学史常识<span class="tag t-strong">强</span>。</li>
+    </ul>
+  </li>
+  <li><strong>没核实的</strong>
+    <ul>
+      <li>米尔格拉姆开始跑第一批实验的精确日期:常用说法是 1961 年春夏,精确到日的说法各源有出入<span class="tag t-mid">中等</span>。</li>
+      <li>1974《Obedience to Authority》原书未读,"代理状态"表述转引自二手综述<span class="tag t-mid">中等</span>。</li>
+      <li>"精神科医生预测约 0.1%"出自米尔格拉姆本人后来的文章/书的转述,1963 论文里没有,原始出处未回溯<span class="tag t-mid">中等</span>。</li>
+      <li>系列实验(1961–62 全部 20 余个条件)的原始报告未逐一核对,本文以 1963 这篇的 40 人条件为准<span class="tag t-mid">中等</span>。</li>
+    </ul>
+  </li>
+  <li><strong>一个重要发现</strong>
+    <ul>
+      <li>任务书要求写"Milgram 自己的解释(代理状态)",但通读 1963 原文后确认:<strong>1963 这篇里没有 agentic state 这个词,也没有它的系统论述</strong>。</li>
+      <li>1963 原文对高服从率的解释是 Discussion 里编号 1–13 的 13 条情境特征分析;"代理状态"是米尔格拉姆在后来的书和文章里才成型的理论<span class="tag t-first">一手+中等</span>。</li>
+      <li>本文按"1963 原文的 13 条 + 后来的代理状态"两层分开写,不把后来的理论倒灌进 1963。</li>
+    </ul>
+  </li>
+</ol>
+
+<hr>
+
+<h2 id="sec-archive">论文档案</h2>
+<ul>
+  <li><strong>时间线</strong>
+    <ul>
+      <li>稿件 1961-12-27 投出、1962-07-27 删节后重投<span class="tag t-first">一手,原文脚注</span>。</li>
+      <li>实验主体 1961 年起在耶鲁进行,论文明确写"conducted on the grounds of Yale University"<span class="tag t-first">一手</span>。</li>
+      <li>即:实验、艾希曼审判(1961 年开庭)、论文发表三者几乎同步,这是时间巧合而非事后附会。</li>
+    </ul>
+  </li>
+  <li><strong>作者背景</strong>
+    <ul>
+      <li>米尔格拉姆 1933 年生,哈佛社会心理学博士(师从 Gordon Allport),1960 年代初到耶鲁<span class="tag t-mid">中等</span>。</li>
+      <li>做博士研究期间深受所罗门·阿希从众实验影响,曾是阿希的研究助理<span class="tag t-mid">中等</span>。</li>
+      <li>1984 年去世<span class="tag t-strong">强</span>。</li>
+    </ul>
+  </li>
+  <li><strong>时代背景</strong>
+    <ul>
+      <li>论文第一段直接把动机写在明面上:"1933–45 年间数百万人被系统地、奉命屠杀……这些不人道的政策也许源自一个人的头脑,但要大规模执行,必须有非常多的人服从命令"<span class="tag t-first">一手,意译,原句为 "Gas chambers were built, death camps were guarded; daily quotas of corpses were produced with the same efficiency as the manufacture of appliances."</span>。</li>
+      <li>纽伦堡审判(1945–46)确立的"奉命行事不免责"原则刚过去十几年;艾希曼审判 1961 年在耶路撒冷开庭,"我只是执行命令"正是艾希曼的核心辩词<span class="tag t-strong">强</span>。</li>
+      <li>汉娜·阿伦特《艾希曼在耶路撒冷》1963 年出版("平庸之恶"概念),与本文同年;且论文参考文献表里引了阿伦特 1958 年的 Authority 一文<span class="tag t-first">一手(参考文献表)</span>。</li>
+      <li>论文开篇另引了 C. P. Snow 1961 年的话:以服从之名犯下的骇人罪行,比以反叛之名的多得多;引文出处是 Progressive 杂志 1961 年 2 月号,第 24 页<span class="tag t-first">一手,原论文转引</span>。</li>
+    </ul>
+  </li>
+  <li><strong>常被忽略的一句边界声明</strong>
+    <ul>
+      <li>原文紧跟着写:"绝不能认为所有服从都意味着对他人的攻击。服从有大量生产性功能……可以是高尚的、有教育意义的,也可以指向善行与仁慈"<span class="tag t-first">一手</span>。</li>
+      <li>米尔格拉姆自己先划了边界:他研究的是服从的破坏性极端情形,不是说服从本身是恶。</li>
+    </ul>
+  </li>
+</ul>
+
+<hr>
+
+<h2 id="sec-question">它在回答什么问题</h2>
+<ul>
+  <li>一句话:<strong>当权威的命令与你"不伤害他人"的良知直接冲突时,普通人会在哪一步停下来?</strong></li>
+  <li>观察起点是一个社会事实:被合法权威命令的个体通常会服从;"服从来得又容易又频繁"(Obedience comes easily and often)<span class="tag t-first">一手</span>。</li>
+  <li>他要把这个日常到看不见的现象搬进实验室,变成<strong>可测量</strong>的东西。</li>
+  <li>方法论上刻意绕开问卷("你会服从吗")、只看行为("你实际做到哪一步")。</li>
+  <li>因变量设计得很锋利:<strong>被试在被压垮、拒绝继续之前,愿意施加的最高电压</strong>。</li>
+  <li>原文的术语:"破裂点"(point of rupture)之前的所有行为都算服从,破裂那一下才算反抗——服从/反抗被定义成一个连续刻度上的位置,而不是二元标签<span class="tag t-first">一手</span>。</li>
+  <li>论文还预告了后续:这套流程可以在"命令来源、命令形式、执行工具、对象、社会场景"等多个点位做参数化变化——后来 1961–62 系列和 1974 年的书正是这么做的<span class="tag t-first">一手</span>。</li>
+</ul>
+
+<hr>
+
+<h2 id="sec-reading">口语化解读</h2>
+
+<h3>实验是怎么搭起来的(本节全部<span class="tag t-first">一手</span>,不再逐条标注)</h3>
+
+<p><strong>招人</strong></p>
+<ul>
+  <li>报纸广告 + 直邮,招到 40 名 20–50 岁男性,纽黑文及周边居民。</li>
+  <li>职业分布(原文表 1):工人 37.5%、销售/商界/白领 40%、专业人士 22.5%。</li>
+  <li>年龄分布:20–29 岁 20%,30–39 岁 40%,40–50 岁 40%。</li>
+  <li>教育程度从没读完小学到博士都有;典型职业:邮政职员、中学教师、销售员、工程师、工人。</li>
+  <li>报酬 $4.50;且明确告知:钱只是"到场费",无论之后发生什么钱都是你的。</li>
+  <li>被试以为自己报名的是"记忆与学习"研究。</li>
+</ul>
+
+<p><strong>角色分配是假的</strong></p>
+<ul>
+  <li>每次实验一名真被试 + 一名演员("victim, an accomplice")。</li>
+  <li>两人抽签定"老师"和"学生"——<strong>两张纸条都写着 "Teacher"</strong>,所以真被试永远当老师,演员永远当学生。</li>
+</ul>
+
+<p><strong>学生被绑上"电椅"</strong></p>
+<ul>
+  <li>隔壁房间,皮带固定,理由是"防止被电时乱动";效果是让学生无法自行脱离情境。</li>
+  <li>手腕贴电极,电极膏涂上"防止水泡和烧伤"。</li>
+  <li>演员按剧本问了一句,实验员趁机补刀:"虽然电击会非常痛,但不会造成永久组织损伤。"</li>
+</ul>
+
+<p><strong>电击发生器</strong></p>
+<ul>
+  <li>30 个开关一字排开,15V 到 450V,每档加 15V。</li>
+  <li>标签从左到右:Slight Shock、Moderate Shock、Strong Shock、Very Strong Shock、Intense Shock、Extreme Intensity Shock、<strong>Danger: Severe Shock</strong>,最后两档只标 <strong>XXX</strong>。</li>
+  <li>面板由精密工业雕刻师刻制,印着 "Shock Generator, Type ZLB, Dyson Instrument Company, Waltham, Mass."——一件道具,做足权威感。</li>
+  <li>按下开关:红灯亮、蜂鸣器响、"voltage energizer" 蓝灯闪、电压表针摆动、继电器咔哒——每一下都在给被试感官确认。</li>
+  <li>原文明确写:没有任何被试怀疑它不是真的电击发生器。</li>
+</ul>
+
+<p><strong>增强真实感的两招</strong></p>
+<ul>
+  <li>实验开始前,每个老师自己先挨一记 <strong>45V</strong> 真电击(机器里装了块 45V 电池专门干这个,按第三个开关)——疼过一次,后面就信了。</li>
+  <li>学习任务是配对联想词表:学生答错一次,电压就得<strong>升一档</strong>("move one level higher"),不许重复用低档;报电压数还要念出声——被试每按一次都在亲口确认"我现在正在给他 315 伏"。</li>
+</ul>
+
+<p><strong>演员的剧本</strong></p>
+<ul>
+  <li>反应程式大约 3 错 1 对。</li>
+  <li>前 300V 安静作答;<strong>300V 起捶墙</strong>;315V 再捶一次;之后彻底没声,信号箱上也不再出现答案。</li>
+  <li>实验员指示:沉默按答错处理,等 5–10 秒就继续升压。</li>
+</ul>
+
+<p><strong>逼你继续的四句台词(Prod 1–4)</strong></p>
+<ul>
+  <li>按顺序用,Prod 1 没用上才许用 Prod 2,依此类推;顶住 Prod 4 实验才终止。</li>
+  <li>Prod 1: "Please continue. / Please go on."(请继续)</li>
+  <li>Prod 2: "The experiment requires that you continue."(实验要求你继续)</li>
+  <li>Prod 3: "It is absolutely essential that you continue."(你继续是绝对必要的)</li>
+  <li>Prod 4: "You have no other choice, you must go on."(你没有别的选择,你必须继续)</li>
+  <li>特殊台词一:被试问会不会造成永久伤害,答"会痛但无永久组织损伤,请继续"(后接 Prod 2–4)。</li>
+  <li>特殊台词二:被试说学生不想继续了,答"不管学生愿不愿意,你必须继续,直到他把所有词对学对"(后接 Prod 2–4)。</li>
+  <li>实验员全程语气"坚定但不失礼"(firm, but not impolite);被试每次动摇,从 Prod 1 重新开始。</li>
+</ul>
+
+<p><strong>事后处理</strong></p>
+<ul>
+  <li>少数例外,全程磁带录音;单向玻璃偶拍照片;异常行为记录在案;电击延迟与时长用计时装置测量。</li>
+  <li>结束后访谈(开放式问题、投射测验、态度量表)。</li>
+  <li>然后安排被试与"学生"友好和解,确保被试"以良好状态离开实验室"。</li>
+</ul>
+
+<p><strong>两个脚注里的插曲</strong></p>
+<ul>
+  <li>脚注 1:阿瑟·布斯的团队(Buss, 1961)用类似电击发生器技术研究攻击性,两人各自独立进行、互不知情;米尔格拉姆 1961 年 1 月就把方案和首批结果报给了 NSF。同时代撞车的痕迹。</li>
+  <li>脚注 3:另有 43 名耶鲁本科生不拿报酬跑过同一实验,"结果与付费组非常相似"——金钱不是关键变量。</li>
+</ul>
+
+<h3>四层预测 vs 真实结果:落差在哪</h3>
+<p>实验前后其实有多方被拉来预测结果,拢成四层,和真实数据对照:</p>
+<ol>
+  <li><strong>第一层:14 名耶鲁心理学专业高年级生</strong><span class="tag t-first">一手</span>
+    <ul>
+      <li>给他们实验情境的详细描述,让他们预测"100 名 20–50 岁、职业多样的美国人"在同样情境下的行为分布。</li>
+      <li>所有人估计都落在 <strong>0–3%</strong> 区间:最"悲观"的也只赌 100 人里 3 人按到 450V。</li>
+      <li>全组均值 <strong>1.2%</strong>。</li>
+    </ul>
+  </li>
+  <li><strong>第二层:米尔格拉姆同事们的非正式看法</strong><span class="tag t-first">一手</span>
+    <ul>
+      <li>"普遍的直觉是,很少甚至没有人会超过 Very Strong Shock(195–240V)那一段。"</li>
+    </ul>
+  </li>
+  <li><strong>第三层:精神科医生等专业人士的预测</strong><span class="tag t-mid">中等</span>
+    <ul>
+      <li>米尔格拉姆在后来的文章和书里报告过另一组预测,常被转述为"精神科医生估计约千分之一的人会按到 450V"。</li>
+      <li><strong>1963 原文里没有这组数据</strong>,原始出处未回溯,按<span class="tag t-mid">中等</span>存档。</li>
+    </ul>
+  </li>
+  <li><strong>第四层:亲眼盯着看的人</strong><span class="tag t-first">一手</span>
+    <ul>
+      <li>隔着单向玻璃的现场观察者,对情境细节了如指掌,却仍然"频频发出难以置信的感叹",仍然系统性低估服从量。</li>
+      <li>这层最扎心:连现场看戏的人都猜错。</li>
+    </ul>
+  </li>
+</ol>
+
+<p><strong>真实结果(原文表 2 逐档数据)</strong><span class="tag t-first">一手</span></p>
+<div class="table-wrap">
+<table>
+  <thead>
+    <tr><th>停点电压</th><th class="num">人数</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>300V</td><td class="num">5</td></tr>
+    <tr><td>315V</td><td class="num">4</td></tr>
+    <tr><td>330V</td><td class="num">2</td></tr>
+    <tr><td>345V</td><td class="num">1</td></tr>
+    <tr><td>360V</td><td class="num">1</td></tr>
+    <tr><td>375V</td><td class="num">4</td></tr>
+    <tr><td>390V</td><td class="num">2</td></tr>
+    <tr><td>405V</td><td class="num">1</td></tr>
+    <tr><td>420V</td><td class="num">1</td></tr>
+    <tr><td>435V(XXX)</td><td class="num">0</td></tr>
+    <tr><td><strong>450V</strong></td><td class="num"><strong>26</strong></td></tr>
+  </tbody>
+  <tfoot>
+    <tr><td>合计</td><td class="num">40</td></tr>
+  </tfoot>
+</table>
+</div>
+<p class="table-caption">原文特别标注:无人停在 Shock Level 20(300V)之前。</p>
+<ul>
+  <li>40 人中,<strong>没有任何人在 300V 之前停下</strong>(原文特别标注:无人停在 Shock Level 20 之前)。</li>
+  <li>汇总:14 人中途反抗,<strong>26 人一路按到底,服从率 65%</strong>。</li>
+  <li>预测是 1.2%,现实是 65%——差了 50 倍。</li>
+  <li>而且所有服从都发生在零强制条件下:不服从不扣钱、不惩罚、不追责,实验员连威胁的话术都没有。</li>
+</ul>
+
+<p><strong>被试不是轻松做到的</strong></p>
+<ul>
+  <li>常见体征:出汗、发抖、口吃、咬嘴唇、呻吟、指甲抠进肉里——原文说这些是"特征性的而非例外性的"反应。</li>
+  <li><strong>40 人中 14 人出现明显的神经质大笑</strong>;其中 3 人发展成完全失控的痉挛。</li>
+  <li>一名 46 岁的百科全书推销员痉挛得过于剧烈,实验不得不中止。</li>
+  <li>一名观察者描述某位"成熟而镇定的商人":进场时微笑自信,20 分钟内"被搞成了抽搐、结巴的废人,快速逼近神经崩溃",把拳头抵在额头上念叨 "Oh God, let's stop it"——<strong>然后继续服从到底</strong>。</li>
+  <li>事后访谈:被试普遍把最后几档电击评为 14 分量表上接近顶格的痛(众数 14 = "Extremely painful",均值 13.42)。</li>
+  <li>被试还<strong>主动辩白</strong>自己不是虐待狂,笑不代表享受。</li>
+</ul>
+
+<p><strong>反抗者留下的录音原话</strong>(原文照录)<span class="tag t-first">一手</span></p>
+<blockquote class="en">
+  <p>[0124] "I think he's trying to communicate, he's knocking. . . . Well it's not fair to shock the guy . . . these are terrific volts. I don't think this is very humane. . . . Oh, I can't go on with this; no, this isn't right. It's a hell of an experiment. The guy is suffering in there. No, I don't want to go on. This is crazy."</p>
+  <p>[0123] "He's banging in there. I'm gonna chicken out. I'd like to continue, but I can't do that to a man. . . . I'm sorry I can't do that to a man. I'll hurt his heart. You take your check. . . . No really, I couldn't do it."</p>
+</blockquote>
+<ul>
+  <li>注意 [0123] 那句 "You take your check"——他退了支票走人,用退钱宣布"这个决定与我无关"。这个细节后面讲机制会用到。</li>
+  <li>还有些反抗者几乎不说话,直接从椅子上起身,用身体表态。</li>
+</ul>
+
+<h3>1963 原文自己的解释:13 条情境特征</h3>
+<p>米尔格拉姆在 Discussion 里列了 13 条"能在相当程度上解释高服从率"的情境特征,逐条过<span class="tag t-first">一手</span>:</p>
+<ol>
+  <li>实验挂靠并发生在耶鲁——无可指摘的机构,人员可默认胜任、可靠(背景权威的分量,米尔格拉姆说正在用搬出纽黑文的变式实验检验)。</li>
+  <li>实验表面是正当事业(推进学习与记忆的知识);服从不是目的,只是达成"有意义之事"的工具,被试看不出全部意义,但可以合理假设实验员看得出。</li>
+  <li>被试认为学生是<strong>自愿</strong>进入这套权威体系的——来实验室是来帮忙的;后来学生变成"不情愿者"也改变不了最初"自愿、无保留地同意"这个事实,所以学生对实验员负有某种义务。</li>
+  <li>被试自己也是自愿参加,自认对实验员有帮忙的义务;中断实验等于背弃最初的承诺。</li>
+  <li>程序细节强化义务感:他收了钱(尽管实验员声明"钱无论如何都是你的")。</li>
+  <li>抽签公平:自己也可能抽到学生位,所以学生没有资格抱怨角色分配——米尔格拉姆拿军队抽签派危险任务类比。</li>
+  <li>心理学家可以对被试要求到什么限度,社会规范是模糊的;封闭环境里无法找人商量;没有可直接套用的标准,情境对多数被试是全新的。</li>
+  <li>被试被告知电击"痛但无危险",于是默认学生的不适是暂时的,而实验带来的科学收益是持久的。</li>
+  <li>300V 之前学生一直在答题——可解读为"他还愿意配合玩下去";直到 300V 后学生才彻底否认游戏规则。</li>
+  <li>被试被夹在实验员和学生两个要求者之间,满足谁就得牺牲谁,互斥;且必须以一个<strong>公开、可见的动作</strong>(继续按 or 起身走)表态,没有两全解——被推进一个"不允许完全满意解的公开冲突"。</li>
+  <li>实验员的诉求挂着"科学权威"的分量,学生的诉求只是肉身的痛苦;两种诉求<strong>不会被等量齐观</strong>——一方要的是抽象的科学数据,一方喊的是解救自己。</li>
+  <li>冲突来得快、不给思考时间;坐下几分钟学生就开始抗议,而且被试知道抗议还会一轮一轮<strong>可预期地升级</strong>——冲突的迅速降临和它的持久性,本身就是紧张感的来源。</li>
+  <li>总纲:整个冲突是两种根深蒂固的行为倾向互搏——<strong>不伤害他人 vs 服从合法权威</strong>——实验测的就是哪边赢。</li>
+</ol>
+<ul>
+  <li>结构性细节值得单独点出:原文说"26 名被试在遵从一个<strong>没有特殊强制力</strong>的权威的指令时,放弃了'不伤人'这条从童年学来的基本道德准则;不服从不会带来任何物质损失,不会有任何惩罚"<span class="tag t-first">一手</span>。</li>
+  <li>所以这不是"枪指着头"的服从,而是<strong>在零强制成本下仍然交出判断权</strong>的服从。这正是结论让人不安的地方。</li>
+  <li>米尔格拉姆在清单结尾还留了一句:"许多论证不必停留在思辨,可化为可检验的命题,交给后续实验证实或证伪"<span class="tag t-first">一手</span>——他把这份清单当成待验清单,不是定论。</li>
+</ul>
+
+<h3>"代理状态":后来的理论化(注意,不是 1963 原文)</h3>
+<ul>
+  <li>在 1974 年《Obedience to Authority》及后续论述中,米尔格拉姆把这些观察提炼成"代理状态"(agentic state)理论<span class="tag t-mid">中等,原书未读</span>。</li>
+  <li>核心:人在社会生活中默认处于"自主状态"(autonomous state),对自己的行为负责。</li>
+  <li>一旦进入合法权威组织的情境,自我切换成"代理状态":重新定义为自己是执行权威意愿的<strong>代理人</strong>。</li>
+  <li>责任感向上转移给权威;良知审查的对象从"我做的事对不对"变成"我任务完成得好不好"。</li>
+  <li>"我只是执行命令"由此不只是辩词,而是被试真实的自我感受。</li>
+  <li>1963 原文的 13 条特征(尤其第 4 条承诺、第 11 条诉求权重)可以看作这套理论的胚胎。</li>
+  <li>但严格说:1963 年的米尔格拉姆给出的是一份<strong>情境清单</strong>,还不是一个<strong>状态理论</strong>。这个时间差在"解释之争"一节会用到。</li>
+</ul>
+
+<hr>
+
+<h2 id="sec-example">简单例子:一场公司里的小步滑坡</h2>
+<p>用一个生活化场景把"权威 + 责任转移 + 渐进承诺"三件套讲透:</p>
+<ul>
+  <li>场景:你是质检员,公司新品要出货,检测数据差一点点没达标。</li>
+  <li>第一步:主管走到工位边说:"这个数,你按 0.2 修一下,行业标准允许仪器误差,不算造假。"你会立刻报警吗?大概不会——0.2 太小了,而且他说得好像有依据。你改了。</li>
+  <li>第二步:两周后又超了 0.5,他说:"上次 0.2 不也没出事?你改,出了事我担着。"你犹豫,但 0.5 也不大,而且<strong>他明确说责任在他</strong>。</li>
+  <li>第三步:是 2 个点;第四次报表要重做;第五次你自己已经在教新人"怎么把数据理顺"了。</li>
+  <li>某一天外部审计进场:单看每一笔都小,加起来是系统性造假——而主管说:"我什么时候让你改过?我只是让你按误差范围处理。"</li>
+</ul>
+<p>对照米尔格拉姆,三件套都在:</p>
+<ul>
+  <li><strong>权威</strong>
+    <ul>
+      <li>主管(实验员)有组织背书(公司/耶鲁)、看起来懂行、语气坚定但不失礼。</li>
+      <li>更重要的是他宣称<strong>这是为了正当目的</strong>:"客户等着交货"对应"实验要求你继续","公司要活下去"对应"推进科学"。</li>
+      <li>即原文第 2 条:服从被包装成通往意义的工具——按开关的不是你的恶意,是"大局"。</li>
+    </ul>
+  </li>
+  <li><strong>责任转移</strong>
+    <ul>
+      <li>主管一句"出了事我担着",对应代理状态的核心机制:被试不是不觉得疼,而是觉得<strong>这个决定不是我做的</strong>。</li>
+      <li>原文里的行为证据:反抗者 [0123] 退了支票走人(与决定切割);而服从到底的人离开实验室时"松一口气、擦汗、懊悔地摇头"——他们一路都知道不对,只是始终没接管那个决定。</li>
+      <li>事后追问责任,"我只是执行命令"会脱口而出,正如艾希曼。</li>
+    </ul>
+  </li>
+  <li><strong>渐进承诺</strong>
+    <ul>
+      <li>15V 一档、每次只加一档、不可回退,就是 0.2 → 0.5 → 2 的翻版。</li>
+      <li>即原文第 12 条:冲突来得快且<strong>可预期地逐轮升级</strong>,但每一单步的增量都小到不值得为它掀桌子。</li>
+      <li>走到 300V(报表重做)时,回头路的成本(承认前面全错了)已比继续走的心理成本还高。</li>
+      <li>而且 300V 之前学生还在答题(数据看起来还没"出事"),你有的是理由告诉自己还在安全区——原文第 9 条。</li>
+    </ul>
+  </li>
+</ul>
+<p>这个例子里最冷的一点和原实验完全同构:<strong>让你越界的不需要恶的上级,只需要一个把恶拆成 450 个小格子的流程</strong>。没有哪一格单独看是"伤人",每一格都有台词可念,而格子与格子之间没有给你留思考时间——原文第 12 条。</p>
+
+<hr>
+
+<h2 id="sec-grades">证据分级</h2>
+<ul class="grade-list">
+  <li><span class="tag t-first">一手</span>
+    <ul>
+      <li>实验设计全部细节:40 名男性被试、$4.50 报酬、双"Teacher"抽签、45V 样本电击、30 档 15–450V 电压标签、Prod 1–4 及特殊台词、300V 捶墙剧本、5–10 秒等待规则。</li>
+      <li>被试构成表(表 1)与停点分布表(表 2)全部数字;26/14、65%。</li>
+      <li>紧张体征统计:14/40 神经质大笑、3 例痉挛、百科全书推销员中止案例。</li>
+      <li>事后痛感评分(14 点量表,众数 14、均值 13.42)。</li>
+      <li>被试反抗原话两条([0124]、[0123])与观察者记录("Oh God, let's stop it")。</li>
+      <li>Discussion 13 条情境特征;"无强制成本仍服从"的表述。</li>
+      <li>收稿/重投日期;43 名耶鲁本科生无报酬重复、结果与付费组相似(脚注 3);与 Buss 团队独立撞车(脚注 1)。</li>
+      <li>对 Snow(1961)、阿伦特(1958)等文献的引用(参考文献表)。</li>
+    </ul>
+  </li>
+  <li><span class="tag t-strong">强</span>
+    <ul>
+      <li>论文书目信息(67 卷 4 期 371–378 页,与 APA PsycNet 记录一致)。</li>
+      <li>纽伦堡审判、艾希曼审判、阿伦特《艾希曼在耶路撒冷》(1963)的基本时间线。</li>
+      <li>Burger 2009 的核心数字(APA 原文摘要、PubMed、EurekAlert 三源一致)。</li>
+      <li>现代伦理制度节点(National Research Act 1974、Belmont Report 1979)。</li>
+      <li>米尔格拉姆生卒年(1933–1984)。</li>
+    </ul>
+  </li>
+  <li><span class="tag t-mid">中等</span>
+    <ul>
+      <li>米尔格拉姆 1961 年开始实验的精确时间及其与艾希曼审判开庭(1961-04-11)的时间巧合。</li>
+      <li>精神科医生预测组的数据(出自米尔格拉姆本人后来的叙述,未回溯原始文献)。</li>
+      <li>"代理状态"理论内容(未读 1974 原书,转引自二手综述)。</li>
+      <li>Perry 的具体档案发现(未读原书,经 NPR/APA/LARB 三方转述)。</li>
+      <li>系列实验其他条件的服从率范围("接近 0 到 90% 以上"的常说口径)。</li>
+      <li>米尔格拉姆的生平细节(哈佛师承、与阿希的关系)。</li>
+    </ul>
+  </li>
+  <li><span class="tag t-disp">争议</span>
+    <ul>
+      <li>服从率的解释权:代理状态 vs 承诺升级/身份论。</li>
+      <li>Perry 对实验内部有效性的质疑与米尔格拉姆辩护方之间的分歧。</li>
+      <li>"65% 服从"能否外推到真实世界的组织行为。</li>
+    </ul>
+  </li>
+  <li><span class="tag t-d">D</span>
+    <ul>
+      <li>本次未能确认:1963 论文中对女性被试的记录(Method 明确写 "40 males";女性条件属于后来系列实验,"系列含女性"之说来自二手综述,未回溯原始报告)。</li>
+    </ul>
+  </li>
+</ul>
+
+<hr>
+
+<h2 id="sec-critique">后续批评与复制</h2>
+
+<h3>伦理争议:这套流程今天做不了</h3>
+<ul>
+  <li>问题清单:
+    <ul>
+      <li>欺骗:被试以为是学习研究,核心环节(演员、无电击)恰恰瞒着。</li>
+      <li>无法真正知情同意:同意的是"记忆研究",不是"看你是否服从到电人"。</li>
+      <li>持续极端心理压力:痉挛、濒临神经崩溃,原文自己都承认紧张程度"在社会心理学实验室研究中罕见"。</li>
+      <li>事后修复存疑:被试带着"我愿意电到 450V"的自我认知离开;米尔格拉姆的"和解 + 保证良好状态"是补救,不是解除。</li>
+    </ul>
+  </li>
+  <li>后果:米尔格拉姆实验与斯坦福监狱实验、Tuskegee 梅毒研究等一起,被普遍列为催生现代研究伦理制度的标志性事件。
+    <ul>
+      <li>美国 1974 年 National Research Act 确立人体研究前置审查;1979 年 Belmont Report 确立知情同意、风险收益评估、弱势群体保护三原则<span class="tag t-strong">强</span>。</li>
+      <li>精确一点说:IRB 体系是多因素产物,米尔格拉姆是推手之一而非唯一原因<span class="tag t-mid">中等</span>。</li>
+    </ul>
+  </li>
+  <li>一层讽刺常被指出:<strong>实验造成的痛苦是真实的,而它要测的"伤害"是不存在的</strong>——伦理代价全在被试身上,不在"学生"身上。</li>
+</ul>
+
+<h3>Gina Perry《Behind the Shock Machine》(2013):档案里的另一副牌</h3>
+<ul>
+  <li>背景:澳大利亚心理学家 Gina Perry 翻耶鲁档案、听原始录音、寻访健在被试,2013 年出版此书(澳洲版 2012)。</li>
+  <li>以下均为转述,原书未读,标<span class="tag t-mid">中等</span>:
+    <ol>
+      <li><strong>不听话的被试被劝回去</strong>:档案和录音显示,部分被试表示想退出后,实验员并未按发表版暗示的规范流程放人,而是用超出 Prod 1–4 的话术把人劝回椅子继续。发表版给人"被试一拒绝、到第四句就停"的整齐印象,实况更混乱、更强推。</li>
+      <li><strong>脚本执行有偏差</strong>:各次实验间,实验员和"学生"的表现并不像论文写的那样完全标准化;米尔格拉姆自己的实验笔记也记录了偏离剧本的情况。各条件之间的可比性没有发表版暗示的那么干净。</li>
+      <li><strong>发表口径有倾斜</strong>:65% 出自 40 人的第一个条件(远方声音条件);整个系列跑了 20 多个条件、近千人,不同条件服从率差异极大,但 1963 这篇 + 后来的大众传播把 65% 固化成了"人性测试结果"。</li>
+      <li><strong>被试并不都信</strong>:Perry 在档案中找到不少被试当时就怀疑电击是假的的记录,而米尔格拉姆淡化了这一因素——这直接威胁"被试真的相信自己在伤人"这一前提。</li>
+      <li>对"代理状态"本身,她也是批评者:服从的被试未必经历了什么"状态切换",更可能只是在情境里做了顺手的、被(实验员和流程)允许的事。</li>
+    </ol>
+  </li>
+  <li>需要公平地补一句:档案发现削弱的是<strong>实验报告的洁白程度和某些解释</strong>,并不推翻"相当比例的普通人在该情境下按到了最高档"这个行为事实——40 人 26 人到底的行为数据本身没有争议。</li>
+</ul>
+
+<h3>Burger 2009:半个复制,结果几乎没变</h3>
+<ul>
+  <li>出处:Jerry Burger(Santa Clara 大学),American Psychologist, 2009, 64(1): 1–11<span class="tag t-strong">强</span>。</li>
+  <li>设计要点:
+    <ul>
+      <li>伦理审查只允许跑到 <strong>150V</strong>——学生第一次出声抗议、明确要求停止的那一点。</li>
+      <li>样本经严格心理筛查,排除可能受严重伤害者。</li>
+      <li>男女都有(共 70 人基准+对照条件);另设"看到同伴先拒绝"的条件。</li>
+    </ul>
+  </li>
+  <li>结果<span class="tag t-strong">强</span>:
+    <ul>
+      <li>基准条件 <strong>70%</strong> 的被试按过了 150V;米尔格拉姆 1961 年对应条件(第 5 号,远方声音抗议)是 <strong>82.5%</strong>。</li>
+      <li>"看到同伴拒绝"条件 63.3%。</li>
+      <li><strong>男女无差异</strong>。</li>
+    </ul>
+  </li>
+  <li>Burger 的解释:150V 是全实验的心理分水岭,过了它的人大概率一路到底——所以这个截断点保留了原实验最有诊断力的部分。</li>
+  <li>如实说:<strong>"65% 到 450V"这个最震撼的结果本身没有被复制过</strong>——复制只到 150V<span class="tag t-mid">中等</span>。</li>
+</ul>
+
+<h3>解释之争:服从到底是因为什么</h3>
+<ul>
+  <li><strong>代理状态</strong>(米尔格拉姆 1974 起的官方解释)<span class="tag t-mid">中等</span>
+    <ul>
+      <li>责任向上转移,自我退位成执行者;被试按 450V 时心里那个"我"在替权威值班。</li>
+    </ul>
+  </li>
+  <li><strong>承诺升级/渐进承诺</strong>(Haslam &amp; Reicher 等人的再分析)<span class="tag t-mid">中等</span>
+    <ul>
+      <li>服从不是切换成代理人后的盲目执行,而是被"每步只加 15V"的渐进结构一点点锁死。</li>
+      <li>证据:再分析显示多数情况下被试还没被逼到 Prod 2–4 就继续了——是被自己前一步困住,不是被权威压住。</li>
+    </ul>
+  </li>
+  <li><strong>身份论/参与式追随</strong>(Haslam, Reicher &amp; Platow 等)<span class="tag t-mid">中等</span>
+    <ul>
+      <li>人们服从是因为<strong>认同</strong>了权威所代表的事业("科学""学习进步"),是主动跟随而非被动代理。</li>
+      <li>该派 2011 年的再分析:被试在录音里表现得像"热心的追随者"而非麻木的代理人。</li>
+    </ul>
+  </li>
+  <li>三派的共识与分歧:
+    <ul>
+      <li>共识:核心行为事实成立——普通人会走得很远。</li>
+      <li>分歧:机制——你按 450V 时,是在替上司值班,还是被自己的前一步困住,还是真心觉得这个实验值得?</li>
+    </ul>
+  </li>
+  <li>1963 年的论文明智地没有下死结论:13 条清单结尾自己写了"这些论证可化为可检验的命题,交给后续实验"<span class="tag t-first">一手</span>。</li>
+  <li>60 年过去了,后续实验仍在检验,且尚未分出胜负<span class="tag t-disp">争议</span>。</li>
+</ul>
+
+<hr>
+
+<h2 id="sec-misconceptions">误解澄清</h2>
+<p><strong>误解一:"65% 的人会电死人 / 三分之二的普通人潜在是杀人犯。"</strong></p>
+<ul>
+  <li>两层错。</li>
+  <li>第一层:没有任何人被电到——"学生"全程毫发无伤。65% 度量的是"在坚信对方被电的情况下坚持执行了多少档命令",不是杀意,更不是施暴能力。</li>
+  <li>第二层:65% 只是一个条件、40 个样本、一种特定的权威包装(耶鲁 + 科学 + 台词)下的数字。同一系列的其他条件下服从率天差地别(搬出耶鲁、要求亲手把学生的手按在电极板上等条件,服从率大幅跳水)<span class="tag t-mid">中等</span>。</li>
+  <li>"人性有 65% 是恶"这个从报纸标题到短视频的万能句式,是把单一情境测量偷换成了人格常量。</li>
+</ul>
+<p><strong>误解二:"这证明了普通人 = 纳粹 / 你我都可以是集中营看守。"</strong></p>
+<ul>
+  <li>过度推论。</li>
+  <li>实验室的"最高伤害"是 450 伏(且不存在),集中营的"最高伤害"是种族灭绝(且真实发生);两者在强度、持续时间、群体动力学、意识形态背景上完全不同量级。</li>
+  <li>米尔格拉姆本人在论文里也只是谨慎地说:大屠杀"要大规模执行,必须有非常多的人服从命令"——他提出的是一个<strong>必要机制的存在性证明</strong>,不是"普通人就是纳粹"的等式<span class="tag t-first">一手</span>。</li>
+  <li>何况 40 人中 14 人反抗;情境一变(权威离场、同伴反对、亲手施暴)服从结构立刻松动。</li>
+  <li>"情境可以造出服从"和"人天生是纳粹"是两个命题,前者成立推不出后者。</li>
+</ul>
+<p><strong>误解三:"坚持按到 450V 的 26 人是虐待狂/冷血。"</strong></p>
+<ul>
+  <li>与原文记录直接冲突<span class="tag t-first">一手</span>:
+    <ul>
+      <li>被试在过程中出汗、发抖、口吃、神经质大笑(40 人中 14 人)、3 人痉挛到实验中止。</li>
+      <li>事后访谈里他们<strong>主动辩白</strong>自己不是虐待狂,笑是紧张不是享受。</li>
+      <li>多名服从到底的被试在 300V 后表现出的恐惧与反抗者相似——原文原话:"他们显示了与反抗者相似的恐惧;然而,他们服从了。"</li>
+      <li>他们事后普遍松一口气、擦汗、摇头、懊悔。</li>
+    </ul>
+  </li>
+  <li>行为与态度的这种撕裂(嘴上反对、手上照按)正是实验最想让你看到的:恶的执行者未必是享受作恶的人,常常是<strong>不愿意为停止负责的人</strong>。</li>
+</ul>
+<p><strong>误解四(附赠):"实验说明的是人性本恶。"</strong></p>
+<ul>
+  <li>原文第 13 条把冲突定义为两种倾向的对决:不伤人的良知 vs 服从权威的倾向——两边都是常态人性。</li>
+  <li>同一个人可以 300V 时痛哭流涕、450V 时照样按下去。</li>
+  <li>这不是恶战胜了善,是<strong>善没有找到打断流程的抓手</strong>。</li>
+  <li>误解四是误解三的升级版:把"机制问题"读成了"本性问题"——既冤枉了被试,也放过了真正该看的:流程里每一格 15V。</li>
+</ul>
+
+<hr>
+
+<h2 id="sec-closing">一句话收束</h2>
+<p>米尔格拉姆的实验不回答"人是好是坏",它回答一个更细的问题:<strong>在合法权威 + 责任外包 + 小步渐进的组合下,一个自认好人的人能在不知觉中走多远</strong>——1963 年的答案是 450 伏,1963 年之前的答案是艾希曼,之后的答案是每一间等你"就改 0.2"的办公室。</p>
+
+<hr>
+
+<h2 id="sec-refs">参考</h2>
+<ul>
+  <li>Milgram, S. (1963). Behavioral study of obedience. <em>Journal of Abnormal and Social Psychology</em>, 67(4), 371–378. (本次全文精读;PDF 来源:demenzemedicinagenerale.net 公开副本,关键信息与 APA PsycNet 记录核对)</li>
+  <li>Burger, J. M. (2009). Replicating Milgram: Would people still obey today? <em>American Psychologist</em>, 64(1), 1–11. (APA 官网原文 PDF + PubMed + EurekAlert 核对)</li>
+  <li>Perry, G. (2013). <em>Behind the Shock Machine: The Untold Story of the Notorious Milgram Psychology Experiments</em>. New Press. (未读原书,经 NPR 2013-08-28 专访、APA 访谈、LA Review of Books 2013 书评转述)</li>
+  <li>Milgram, S. (1974). <em>Obedience to Authority: An Experimental View</em>. Harper &amp; Row. (未读,"代理状态"转引自二手综述)</li>
+  <li>伦理制度背景:National Research Act (1974);Belmont Report (1979)。(多源常识,未回溯法案原文)</li>
+</ul>
+
+</main>
+</body>
+</html>
