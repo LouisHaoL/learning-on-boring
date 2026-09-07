@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>期望效用 · Bernoulli (1738) 解读</title>
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #f7f5f0;
+    --fg: #2a2723;
+    --muted: #6f6a62;
+    --card: #fffdf9;
+    --border: #e3ddd2;
+    --accent: #8a5a2b;
+    --quotebar: #c9a468;
+    --quotebg: #faf4e8;
+    --code-bg: #efe9dd;
+    --shadow: rgba(60, 50, 30, 0.08);
+    /* 证据分级 */
+    --ev1-fg: #1e6b3a; --ev1-bg: #e0f2e6; --ev1-bd: #9fceb0;
+    --ev2-fg: #1c4f8a; --ev2-bg: #dfeafa; --ev2-bd: #a3c2e8;
+    --ev3-fg: #7a5c00; --ev3-bg: #faf0cf; --ev3-bd: #dcc46e;
+    --ev4-fg: #99430a; --ev4-bg: #fde8d8; --ev4-bd: #e8b28c;
+    --evd-fg: #565650; --evd-bg: #e8e8e4; --evd-bd: #bdbdb6;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #1d1b18;
+      --fg: #ddd8cf;
+      --muted: #948e83;
+      --card: #26231f;
+      --border: #3a362f;
+      --accent: #d0a26a;
+      --quotebar: #8a6d3f;
+      --quotebg: #2a261f;
+      --code-bg: #302c25;
+      --shadow: rgba(0, 0, 0, 0.35);
+      --ev1-fg: #7fd39c; --ev1-bg: #1e3327; --ev1-bd: #3d5c48;
+      --ev2-fg: #8cb8ef; --ev2-bg: #1e2c40; --ev2-bd: #3d5470;
+      --ev3-fg: #ddc06a; --ev3-bg: #352c14; --ev3-bd: #5c4e26;
+      --ev4-fg: #e8a077; --ev4-bg: #38241466; --ev4-bd: #634428;
+      --evd-fg: #a8a8a0; --evd-bg: #2c2c29; --evd-bd: #4a4a44;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+    font-size: 16px;
+    line-height: 1.8;
+  }
+  main {
+    max-width: 42rem;
+    margin: 0 auto;
+    padding: 2.5rem 1.25rem 4rem;
+  }
+  h1 { font-size: 1.7rem; line-height: 1.4; margin: 0 0 0.5rem; }
+  h2 { font-size: 1.32rem; margin: 3rem 0 0.9rem; padding-bottom: 0.35rem; border-bottom: 1px solid var(--border); }
+  h3 { font-size: 1.08rem; margin: 2rem 0 0.6rem; color: var(--accent); }
+  p { margin: 0.7rem 0; }
+  ul, ol { padding-left: 1.4rem; margin: 0.6rem 0; }
+  li { margin: 0.3rem 0; }
+  li > ul, li > ol { margin: 0.25rem 0; }
+  hr { border: none; border-top: 1px solid var(--border); margin: 2.6rem 0; }
+  strong { color: var(--fg); }
+  em { color: var(--muted); }
+  code {
+    font-family: ui-monospace, Consolas, "Courier New", monospace;
+    font-size: 0.85em;
+    background: var(--code-bg);
+    padding: 0.1em 0.35em;
+    border-radius: 4px;
+    overflow-wrap: break-word;
+  }
+  sup { font-size: 0.72em; }
+  .subtitle { color: var(--muted); margin-bottom: 1.5rem; }
+  .meta-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--quotebar);
+    border-radius: 8px;
+    padding: 1rem 1.2rem;
+    margin: 1.2rem 0;
+    box-shadow: 0 1px 3px var(--shadow);
+    font-size: 0.94rem;
+  }
+  .meta-card p { margin: 0.35rem 0; }
+  .toc {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem 1.2rem;
+    margin: 1.4rem 0 0;
+    font-size: 0.94rem;
+  }
+  .toc ol { margin: 0.3rem 0 0.1rem; padding-left: 1.3rem; }
+  .toc a { color: var(--accent); text-decoration: none; }
+  .toc a:hover { text-decoration: underline; }
+  blockquote {
+    margin: 1rem 0;
+    padding: 0.7rem 1.1rem;
+    background: var(--quotebg);
+    border-left: 4px solid var(--quotebar);
+    border-radius: 0 6px 6px 0;
+    color: var(--fg);
+  }
+  blockquote p { margin: 0.3rem 0; }
+  .scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 1rem 0; }
+  table {
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    min-width: 100%;
+  }
+  th, td { border: 1px solid var(--border); padding: 0.4rem 0.65rem; text-align: left; vertical-align: top; }
+  th { background: var(--code-bg); }
+  .badge {
+    display: inline-block;
+    font-size: 0.76rem;
+    line-height: 1.5;
+    font-weight: 600;
+    padding: 0 0.5em;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    vertical-align: 0.08em;
+    white-space: nowrap;
+  }
+  .b1 { color: var(--ev1-fg); background: var(--ev1-bg); border-color: var(--ev1-bd); }
+  .b2 { color: var(--ev2-fg); background: var(--ev2-bg); border-color: var(--ev2-bd); }
+  .b3 { color: var(--ev3-fg); background: var(--ev3-bg); border-color: var(--ev3-bd); }
+  .b4 { color: var(--ev4-fg); background: var(--ev4-bg); border-color: var(--ev4-bd); }
+  .bd { color: var(--evd-fg); background: var(--evd-bg); border-color: var(--evd-bd); }
+  figure { margin: 1.4rem 0; text-align: center; }
+  figure svg { max-width: 100%; height: auto; }
+  figcaption { font-size: 0.85rem; color: var(--muted); margin-top: 0.4rem; }
+  .footer { color: var(--muted); font-size: 0.88rem; border-top: 1px solid var(--border); padding-top: 1rem; margin-top: 3rem; }
+</style>
+</head>
+<body>
+<main>
+
+<h1>期望效用:价值不在金额里,而在"这钱对你算什么"</h1>
+<p class="subtitle">论文解读 / 2026-09</p>
+
+<div class="meta-card">
+<p><strong>解读对象</strong>:Daniel Bernoulli, "Specimen theoriae novae de mensura sortis"(风险测量新理论之样本), <em>Commentarii Academiae Scientiarum Imperialis Petropolitanae</em>(圣彼得堡帝国科学院论丛)第 V 卷, 1738, pp. 175–192;通行英译:Louise Sommer 译 "Exposition of a New Theory on the Measurement of Risk", <em>Econometrica</em>, 1954, Vol. 22(1), pp. 23–36。</p>
+<p><strong>证据分级约定</strong>(全文行内标注,沿用本仓库体系):</p>
+<ul>
+<li><span class="badge b1">一手</span> 本次已读到原文全文并逐段核对的内容(可复核)</li>
+<li><span class="badge b2">强</span> 权威工具书 / 官方机构 / 多个独立来源一致</li>
+<li><span class="badge b3">中等</span> 普遍转述或单一可信来源,方向可信,数字留余地</li>
+<li><span class="badge b4">争议</span> 口径分歧明显或方法论受质疑</li>
+<li><span class="badge bd">D</span> 本次未能溯源到原文,存疑待考</li>
+</ul>
+</div>
+
+<nav class="toc">
+<strong>目录</strong>
+<ol>
+<li><a href="#method">研究方法:我怎么找到并读到这篇论文</a></li>
+<li><a href="#archive">论文档案</a></li>
+<li><a href="#question">它在回答什么问题</a></li>
+<li><a href="#reading">口语化解读</a></li>
+<li><a href="#examples">简单例子</a></li>
+<li><a href="#grading">证据分级</a></li>
+<li><a href="#criticism">后续批评与修正</a></li>
+<li><a href="#misread">误解澄清</a></li>
+<li><a href="#ending">一段话收尾</a></li>
+</ol>
+</nav>
+
+<h2 id="method">研究方法:我怎么找到并读到这篇论文</h2>
+
+<ol>
+<li><strong>原文获取</strong>
+<ul>
+<li>用 TinyFish search 搜 1954 年 Sommer 英译的全文副本。</li>
+<li>命中:JSTOR 官方条目(stable/1909829,付费墙)、Econometrica 学会官网条目、捷克技术大学(CTU Prague)课程页托管的一份 Econometrica 1954 扫描件 PDF。</li>
+<li>经网页渲染抓取读出 CTU 托管 PDF 的<strong>全文文本</strong>:正文 §1–§19、译者注、编者注、传记注、Karl Menger 撰写的 4 条脚注(4/9/10/15)、Cramer 1728 年信件的法语原文英译、篇末参考文献表都在,不是节选 <span class="badge b1">一手</span>。</li>
+<li>拉丁原文扫描件(Commentarii 第 V 卷 pp. 175–192)在 Internet Archive 有公开扫描(<code>archive.org/details/SpecimenTheoriaeNovaeDeMensuraSortis</code>)。</li>
+<li>本次读了它的条目页说明(拉丁本与英译的对应关系、卷期"Ad Annos 1730 et 1731"的考据),<strong>未逐页比对拉丁原文</strong> <span class="badge b3">中等</span>(拉丁原文)。</li>
+</ul>
+</li>
+<li><strong>文本质量说明(诚实交代)</strong>
+<ul>
+<li>这份全文是扫描件 OCR,公式区域损毁严重。</li>
+<li>例:§10 的核心微分方程 OCR 成了 "dy = bdx or y = x…xb log~",原文应为 dy = b·dx/x,积分得 y = b·log(x/a);Menger 脚注 10 的独立推导可交叉印证。</li>
+<li>§15、§16、§19 的数值公式同样碎裂,但<strong>题设数字、结果数字和论证文字 OCR 干扰小</strong>,可逐段核对 <span class="badge b1">一手</span>(文字)/<span class="badge b3">中等</span>(公式)。</li>
+<li>Cramer 信中 "224 = 166777216" 是 OCR 把上标拍平所致(应为 2<sup>24</sup> = 16,777,216),数学上自检无歧义 <span class="badge b1">一手</span>(原意为 2<sup>24</sup>)。</li>
+<li>因此本文只对 OCR 干扰小、且能被上下文或数学自检校验的短句做逐字引用。</li>
+<li>所有逐字引文均能在原文文本中找到,未做任何拼合改写 <span class="badge b1">一手</span>。</li>
+</ul>
+</li>
+<li><strong>版本鉴别</strong>
+<ul>
+<li>卷期页码 22(1), pp. 23–36,与 JSTOR 条目、Econometrica 学会官网条目一致 <span class="badge b1">一手</span>+<span class="badge b2">强</span>。</li>
+<li>译者 Louise Sommer(当时任教 The American University, Washington, D.C.)。</li>
+<li>Karl Menger(Illinois Institute of Technology,数学家)写脚注并审校译文。</li>
+<li>译者注还致谢普林斯顿的 William J. Baumol 协助用现代计量经济学视角解读。</li>
+<li>译本声明:"The translation is based solely upon the original Latin text" <span class="badge b1">一手</span>。</li>
+<li>编者注解释刊出动机:Bernoulli 这篇文章"在近来的经济学讨论中被频繁引用",所以登英译让更多人读到——1954 年这次刊出本身就是 vNM 1944/1947 带火的 <span class="badge b1">一手</span>。</li>
+<li>卷 V 扉页标 "Ad Annos 1730 et 1731"(1730–1731 年度卷),据此可推论文至迟 1731 年底已写成提交。</li>
+<li>Archive 条目引 Nicholas Bernoulli 1732 年 4 月 5 日致 Daniel 的信佐证此说;正文自己也写了 1732 年 Nicholas 的回信。</li>
+<li>通行引用年份仍用出版年 1738 <span class="badge b1">一手</span>(译本附注+正文)/<span class="badge b3">中等</span>(提交时间考据)。</li>
+</ul>
+</li>
+<li><strong>交叉核实(二手侧)</strong>
+<ul>
+<li>圣彼得堡悖论 1713 年由 Nicholas Bernoulli 提给 Montmort:Cramer 信里明确说这是"你 1713 年 9 月 9 日写给 Montmort 先生的信中的问题(第 5 题,第 402 页)"。</li>
+<li>译注补充:该信收于 Montmort 1713 年第二版书末通信集 <span class="badge b1">一手</span>。</li>
+<li>Menger 1934 "Das Unsicherheitsmoment in der Wertlehre"(Zeitschrift für Nationalökonomie, Vol. 5):直接出自 1954 译本参考文献表,编者注称其为该问题文献"最详尽的研究" <span class="badge b1">一手</span>(参考文献表)。</li>
+<li>其"超级圣彼得堡悖论"论证细节见下文,标 <span class="badge b3">中等</span>。</li>
+<li>Pringsheim 1896 德译本(此前唯一另一个译本)、Malfatti 1782 最早专文讨论:均出自译本参考文献表 <span class="badge b1">一手</span>(参考文献表)。</li>
+<li>Ole Peters 的遍历性经济学批评(Nature Physics 2019):Archive 条目页列出的延伸文献 <span class="badge b3">中等</span>(未读原文)。</li>
+</ul>
+</li>
+<li><strong>本次实际用到的来源清单</strong>
+<ul>
+<li>英译全文(主要底本):CTU Prague 托管的 Econometrica 1954 扫描 PDF(经网页渲染抓取)。</li>
+<li>拉丁原件扫描:Internet Archive 条目 <code>SpecimenTheoriaeNovaeDeMensuraSortis</code>(读条目页,未读扫描页)。</li>
+<li>条目核对:JSTOR stable/1909829、Econometrica 学会官网论文页。</li>
+</ul>
+</li>
+<li><strong>没核实的</strong>
+<ul>
+<li>拉丁原文与英译的逐句差异:未比对拉丁文本。</li>
+<li>译本自称"尽量保留十八世纪原文气质",数学记法照抄原文。</li>
+<li>Menger 脚注 15 直言 Bernoulli 原文一处论证"obscure(含混)"——译本团队自己就在与原作者拉扯,具体出入处只能按二手转述标 <span class="badge b3">中等</span>。</li>
+<li>"1731/1732 年"两种提法在文献中的细节差异:按译本正文口径记 1732,存疑处不展开 <span class="badge bd">D</span>。</li>
+<li>边际效用三巨头(Jevons/Carl Menger/Walras)各自著作对 Bernoulli 的直接引用情况:未逐本翻检,只按思想史通说转述 <span class="badge b3">中等</span>。</li>
+<li>前景理论 1979 原文中 Bernoulli 被引的具体措辞:已读过该原文(见 <code>prospect-theory.md</code>),此处只做立场互指,不再引用细节 <span class="badge b1">一手</span>(立场)。</li>
+</ul>
+</li>
+</ol>
+
+<h2 id="archive">论文档案</h2>
+
+<ul>
+<li><strong>题目</strong>:Specimen theoriae novae de mensura sortis(风险测量新理论之样本)。</li>
+<li><strong>英译名</strong>:Exposition of a New Theory on the Measurement of Risk <span class="badge b1">一手</span>。</li>
+<li><strong>作者</strong>:Daniel Bernoulli(1700–1782),瑞士巴塞尔数学世家出身。
+<ul>
+<li>生于格罗宁根,死于巴塞尔;巴塞尔大学读数学与医学。</li>
+<li>1725 年应聘新建的圣彼得堡科学院,1733 年回巴塞尔任物理与哲学教授。</li>
+<li>以流体力学(伯努利方程)留名后世;传记注:他是"第一个把数学分析用于流体运动问题的人" <span class="badge b1">一手</span>(译本传记注)。</li>
+</ul>
+</li>
+<li><strong>发表</strong>:圣彼得堡帝国科学院论丛(Commentarii…Petropolitanae)第 V 卷(数学类),1738 年刊出,pp. 175–192。</li>
+<li><strong>本卷对应 1730–1731 年度</strong>,故论文至迟 1731 年底写成 <span class="badge b1">一手</span>+<span class="badge b3">中等</span>。</li>
+<li><strong>英译</strong>:Louise Sommer 译,Karl Menger 添注审校,Econometrica 22(1), 1954-01, pp. 23–36。</li>
+<li><strong>此前唯一另一个译本</strong>:Pringsheim 1896 年德译 <span class="badge b1">一手</span>。</li>
+<li><strong>背景一:一个瑞士数学家族里的通信圈</strong>。
+<ul>
+<li>论文的核心案例(圣彼得堡赌局)不是 Daniel 想出来的。</li>
+<li>是他的堂兄 <strong>Nicolas Bernoulli</strong>(Nicolaus I, 1687–1759,巴塞尔大学双法学教授)1713 年在致 Montmort 的信中提出的五道题的最后一道。</li>
+<li>Nicolas 后又就这题写信问 Daniel 的看法;Daniel 写完论文还寄给 Nicolas 求"阅后意见"。</li>
+<li>一家子把这个悖论当邮件话题聊了二十年 <span class="badge b1">一手</span>。</li>
+</ul>
+</li>
+<li><strong>背景二:撞车</strong>。
+<ul>
+<li>Nicolas 在 1732 年的回信里告知 Daniel:日内瓦数学家 <strong>Gabriel Cramer</strong>(1704–1752)早在 1728 年就给过同方向的解。</li>
+<li>Cramer 的方案:用"钱多到一定程度 pleasure 不再增加"截断奖金,或干脆用效用 ∝ √金额。</li>
+<li>Daniel 的反应是"相似到令人觉得 miraculous(不可思议)"。</li>
+<li>他决定原文照登 Cramer 1728 年信的关键段落,只对自己不同意的一处(13 还是 12)提了异议。</li>
+<li>1738 年的论文里嵌着一封 1728 年的信,学术诚信操作的早期范本 <span class="badge b1">一手</span>。</li>
+</ul>
+</li>
+<li><strong>背景三:刊出时间差</strong>。
+<ul>
+<li>这篇论文被经济学界真正捡起来是在 1954 年(Econometrica 英译 + von Neumann &amp; Morgenstern 引爆),距 1738 年已过两个世纪。</li>
+<li>编者注原话:因为"Bernoulli 的著名论文在近来的经济讨论中被如此频繁地引用",才决定刊出英译 <span class="badge b1">一手</span>。</li>
+</ul>
+</li>
+</ul>
+
+<h2 id="question">它在回答什么问题</h2>
+
+<ul>
+<li>一句话:<strong>为什么一个期望值无穷大的赌局,没人肯出二十个金币买?——数学期望这个"标准答案"本身坏掉了。</strong></li>
+<li>当时的主流共识(§1–§2):赌局的价值 = 期望值(期望值 = 各结局金额 × 对应概率之和)。
+<ul>
+<li>这是从帕斯卡、费马那代人传下来的分析赌博的传统工具,数学家们对它没有分歧 <span class="badge b1">一手</span>(原文开篇的概括)。</li>
+</ul>
+</li>
+<li>圣彼得堡赌局(§17,按原文口径):
+<ul>
+<li>Peter 掷硬币,直到首次出正面为止。</li>
+<li>第一次正面 Paul 得 <strong>1</strong> 金币,第二次得 <strong>2</strong>,第三次得 <strong>4</strong>,每次翻倍,以此类推。</li>
+<li>问:Paul 愿意付多少来玩?</li>
+</ul>
+</li>
+<li>期望值计算:1/2·1 + 1/4·2 + 1/8·4 + … = 1/2 + 1/2 + 1/2 + … = <strong>无穷大</strong>(Menger 脚注 9 的推导原文照录)<span class="badge b1">一手</span>。</li>
+<li>但 Nicolas Bernoulli 在给 Daniel 的信里说:"任何相当理性的人都会<strong>非常乐意</strong>以二十个金币卖掉这个机会。"(逐字)——哪怕期望值是无穷 <span class="badge b1">一手</span>(引信原文)。</li>
+<li>期望值无穷、成交价二十:框架和现实之间差了无穷倍。
+<ul>
+<li>这不是估值误差,是<strong>度量衡选错了</strong>。</li>
+</ul>
+</li>
+<li>注意口径:原论文里的赌局奖金从 1 金币起翻倍(第 n 次出正面得 2<sup>n−1</sup> 金币)。
+<ul>
+<li>今天很多教材写成从 2 金币起(得 2<sup>n</sup>)。</li>
+<li>两种口径期望值同为无穷,数值结论差 1,读二手文献时要先对口径 <span class="badge b1">一手</span>(原文口径)/<span class="badge b3">中等</span>(现代变体)。</li>
+</ul>
+</li>
+<li>问题真正的坏处不止于这一个赌局:如果"价值=期望值"成立,那么——
+<ul>
+<li><strong>保险业不该存在</strong>(见下文 §15 的算例);</li>
+<li><strong>任何公平赌局都该参加</strong>(§14 反证);</li>
+<li><strong>穷人富人对同一张彩票该出同样的价</strong>(§3 反例)。</li>
+<li>Bernoulli 要修的不是一道题,是整套定价逻辑。</li>
+</ul>
+</li>
+</ul>
+
+<h2 id="reading">口语化解读</h2>
+
+<h3>1. 起点:同一样东西,对不同的人不是同一样东西(§3–§5)</h3>
+
+<ul>
+<li>开篇例子:一个<strong>穷人</strong>白捡了一张彩票,五五开中两万金币或零。
+<ul>
+<li>按期望值他该给这张彩票定一万金币的价。</li>
+<li>可"他会不明智地拒绝九千金币的报价吗?"Bernoulli 的答案:不会,卖掉九千完全明智。</li>
+<li>对穷人这是改变命运的数字,不值得为一千金币赌运气。</li>
+<li>反过来,一个<strong>富人</strong>若拒绝九千金币买这张彩票,那才是不明智的 <span class="badge b1">一手</span>。</li>
+</ul>
+</li>
+<li>结论句(§3,逐字):
+<blockquote><p>"一件物品的价值之确定,不应基于其价格,而应基于它所提供的效用。价格只取决于物品本身,对人人相同;效用却取决于做估价之人的具体处境。"</p></blockquote>
+<ul>
+<li>接着原文:无 doubt,"一千金币的收益对穷人比对富人重要得多,尽管两人得到的是同样的数额" <span class="badge b1">一手</span>。</li>
+</ul>
+</li>
+<li>由此引出核心量:<strong>道德期望</strong>(moral expectation)。
+<ul>
+<li>译注交代:Bernoulli 原词 <em>emolumentum medium</em>,直译"平均收益"。</li>
+<li>译者把它译作 mean utility 并附注 moral expectation。</li>
+<li>机制(§4、§7):用"每个可能收益的效用 × 出现方式数"取加权平均,再找与这个平均效用对应的金额,作为赌局对该人的价值 <span class="badge b1">一手</span>。</li>
+</ul>
+</li>
+<li>效用不是铁板一块,Bernoulli 自己举了反例(§5):
+<ul>
+<li>身家两千金币但<strong>还差两千金币赎身</strong>的囚犯,对两千金币的估值会高于比他穷的普通人。</li>
+<li>他说这类"稀有例外"不影响大势——他要建模的是"通常情况" <span class="badge b1">一手</span>。</li>
+</ul>
+</li>
+<li>还有一处容易被略过的妙笔:他说人人都有财富,<strong>连乞丐和负债者也是</strong>。
+<ul>
+<li>能靠乞讨年入十金币的乞丐,不肯接受五十金币换"从此不许乞讨挣钱"的合同;他开价一百。</li>
+<li>于是可以说乞丐"拥有"价值一百金币的财富——他那双讨饭的手就是资产。</li>
+<li>"财富"在这里被定义为"能满足任何欲望的一切东西",包括劳动能力本身 <span class="badge b1">一手</span>。</li>
+</ul>
+</li>
+</ul>
+
+<h3>2. 假设:财富的边际效用与已有财富成反比(§5–§6)</h3>
+
+<ul>
+<li>核心假设(§5,逐字):
+<blockquote><p>"财富的任何增长,无论多么微不足道,总会带来效用的增长,而该效用与已拥有的财物数量成反比。"</p></blockquote>
+</li>
+<li>直觉:你已有的家底越厚,同一块钱在你这里"顶用"的程度越低。</li>
+<li>§6 的校准例子:
+<ul>
+<li>一个有十万金币家底的人和一个有十万个<strong>半金币</strong>(semi-ducat)家底的人。</li>
+<li>前者年收入五千金币、后者年收入五万半金币。</li>
+<li>那么对前者一枚金币的意义,恰等于对后者一枚半金币的意义。</li>
+<li>各得一枚金币时,后者得到的效用是前者的两倍。</li>
+<li>钱多的人,钱"不那么顶用" <span class="badge b1">一手</span>。</li>
+</ul>
+</li>
+<li>写成式子(§10):设现有财富 x、效用 y,则 dy = b·dx/x,积分得 <strong>y = b·log(x/a)</strong>。
+<ul>
+<li>对数效用,b 是常数,a 是初始财富。</li>
+<li>曲线是对数曲线,渐近线存在但效用无上界 <span class="badge b1">一手</span>(文字+Menger 脚注 10 的数学重构)。</li>
+</ul>
+</li>
+</ul>
+
+<figure>
+<svg viewBox="0 0 560 340" width="560" height="340" role="img" aria-label="对数效用曲线示意:财富越高,同等增量带来的效用增量越小" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="0" width="560" height="340" fill="none"/>
+  <!-- axes -->
+  <line x1="60" y1="290" x2="520" y2="290" stroke="var(--muted)" stroke-width="1.5"/>
+  <line x1="60" y1="290" x2="60" y2="30" stroke="var(--muted)" stroke-width="1.5"/>
+  <polygon points="520,290 512,286 512,294" fill="var(--muted)"/>
+  <polygon points="60,30 56,38 64,38" fill="var(--muted)"/>
+  <text x="512" y="310" font-size="13" fill="var(--muted)">财富 x</text>
+  <text x="68" y="42" font-size="13" fill="var(--muted)">效用 y</text>
+  <!-- log curve: y = 250 - 105*ln(x/40)/ln(11) mapped x 40..440 -->
+  <path d="M 60,290 C 150,170 300,105 480,58" fill="none" stroke="var(--accent)" stroke-width="2.5"/>
+  <!-- equal wealth increments -->
+  <line x1="150" y1="290" x2="150" y2="168" stroke="var(--ev2-fg)" stroke-width="1.4" stroke-dasharray="4 3"/>
+  <line x1="250" y1="290" x2="250" y2="130" stroke="var(--ev2-fg)" stroke-width="1.4" stroke-dasharray="4 3"/>
+  <line x1="350" y1="290" x2="350" y2="98" stroke="var(--ev2-fg)" stroke-width="1.4" stroke-dasharray="4 3"/>
+  <line x1="150" y1="168" x2="250" y2="168" stroke="var(--ev1-fg)" stroke-width="2.2"/>
+  <line x1="250" y1="130" x2="350" y2="130" stroke="var(--ev1-fg)" stroke-width="2.2"/>
+  <line x1="350" y1="98" x2="450" y2="98" stroke="var(--ev1-fg)" stroke-width="2.2" stroke-dasharray="2 3"/>
+  <text x="172" y="186" font-size="12" fill="var(--ev1-fg)">Δy₁</text>
+  <text x="272" y="122" font-size="12" fill="var(--ev1-fg)">Δy₂ &lt; Δy₁</text>
+  <text x="366" y="92" font-size="12" fill="var(--ev1-fg)">Δy₃ 更小</text>
+  <text x="120" y="308" font-size="12" fill="var(--muted)">a₀</text>
+  <text x="226" y="308" font-size="12" fill="var(--muted)">a₀+1000</text>
+  <text x="326" y="308" font-size="12" fill="var(--muted)">a₀+2000</text>
+</svg>
+<figcaption>对数效用 y = b·log(x/a)(示意):同样加 1000,家底越厚,效用抬升 Δy 越小——曲线越往右越平。非严格比例,仅示其形。</figcaption>
+</figure>
+
+<ul>
+<li>注意 Bernoulli 的表述层次:
+<ul>
+<li>他先在 §7 用一般曲线(凹函数)给出道德期望的一般理论。</li>
+<li>推论一:曲线变直线,就退回期望值法则;推论二:财富相对赌注无穷大时,期望值法则近似成立。</li>
+<li>对数只是他随后选定的"特例假设"。</li>
+<li>后世把"u = ln(x)"当成 Bernoulli 效用的全部,其实只捡了他一小块 <span class="badge b1">一手</span>。</li>
+</ul>
+</li>
+</ul>
+
+<h3>3. 富人的效用增量小于穷人:这不是修辞,是可以算的</h3>
+
+<ul>
+<li>"一千金币的收益对穷人比对富人重要得多"(§3)——这句话后来被称为边际效用递减。
+<ul>
+<li>但 Bernoulli 已经把"重要程度"做成了可计算的量 <span class="badge b1">一手</span>。</li>
+</ul>
+</li>
+<li>用对数效用算:
+<ul>
+<li>家底 100 的人得 100,效用从 ln100 涨到 ln200,增量 ln2 ≈ 0.69。</li>
+<li>家底 100,000 的人同样得 100,增量 ln(100100/100000) ≈ 0.001。</li>
+<li><strong>同样的钱,效用增量差了几百倍</strong>。</li>
+<li>这就是"富人的一千块和穷人的一千块不是一回事"的数学形态。</li>
+</ul>
+</li>
+<li>Bernoulli 用来定赌局价值的正是这个差:
+<ul>
+<li>不是问"你能赢多少钱",而是问"赢了之后你的 log 财富抬高了多少"。</li>
+<li>这也解释了他 §14 那句极端推论:押上全部家产的人"acts like a simpleton(像个傻子)",<strong>无论可能的赢面多大</strong>。</li>
+<li>因为 log 在高处的增长永远追不上低处损失的下跌 <span class="badge b1">一手</span>。</li>
+</ul>
+</li>
+</ul>
+
+<h3>4. 这如何消解悖论:无穷 × 递减 = 有限</h3>
+
+<ul>
+<li>对数效用下,Paul 的道德期望 = Σ (1/2<sup>n</sup>)·b·log((a + 2<sup>n−1</sup>)/a),其中 a 是 Paul 的家底。</li>
+<li>关键在于第 n 项的结构:
+<ul>
+<li>概率是 1/2<sup>n</sup>,效用增量正比于 2<sup>−n</sup> 的微小抬高。</li>
+<li><strong>两项衰减速率互相咬合,级数收敛</strong>。</li>
+</ul>
+</li>
+<li>Bernoulli 算出的数值(§19,取自原文):
+<ul>
+<li>Paul 一无所有:机会价值<strong>恰为 2 金币</strong>(几何平均公式在 a=0 的极限);</li>
+<li>有 10 金币:约 <strong>3</strong> 金币;</li>
+<li>有 100 金币:约 <strong>4</strong> 金币;</li>
+<li>有 1000 金币:约 <strong>6</strong> 金币;</li>
+<li>要让"花 20 金币买"变得划算,Paul 得先是个天文数字级的富翁 <span class="badge b1">一手</span>。</li>
+</ul>
+</li>
+</ul>
+
+<div class="scroll">
+<table>
+<thead><tr><th>Paul 的家底 a</th><th>该赌局对他的价值(§19)</th></tr></thead>
+<tbody>
+<tr><td>0</td><td>恰为 2 金币</td></tr>
+<tr><td>10 金币</td><td>约 3 金币</td></tr>
+<tr><td>100 金币</td><td>约 4 金币</td></tr>
+<tr><td>1000 金币</td><td>约 6 金币</td></tr>
+</tbody>
+</table>
+</div>
+
+<ul>
+<li>悖论消失了:不是无穷变小了,而是<strong>度量对象换了</strong>。
+<ul>
+<li>从前度量的东西(金额期望)在 Bernoulli 看来本来就不是价值。</li>
+<li>他补了一句:愿意出的买价和他已拥有这机会时的估值"差异极小(当 a 很大时)" <span class="badge b1">一手</span>。</li>
+</ul>
+</li>
+</ul>
+
+<h3>5. 风险厌恶的第一次数学化:公平赌局没人该玩、保险却有人该买</h3>
+
+<ul>
+<li><strong>公平赌局也亏</strong>(§13):
+<ul>
+<li>两个各有 100 金币的人对赌,各押 50。</li>
+<li>按期望值谁也不亏;按对数效用,赢了得 150、输了剩 50。</li>
+<li>几何平均 √(50×150) ≈ 86.6 &lt; 100,<strong>预期亏 13 金币以上</strong>。</li>
+<li>Bernoulli 的原话:"这就是大自然劝我们彻底远离骰子的告诫。"</li>
+<li>他还算了对称的另一例:家底 200 的人押 50,只亏约 6 金币。</li>
+<li><strong>家底越厚,越输得起公平赌局</strong>;由此推出"赌徒押上身家比例越大,越不审慎" <span class="badge b1">一手</span>。</li>
+</ul>
+</li>
+<li><strong>Caius 买保险的算例</strong>(§15):
+<ul>
+<li>圣彼得堡商人 Caius 在阿姆斯特丹进了 1 万卢布的货海运回国。</li>
+<li>当时节 100 艘船通常沉 5 艘;保险费 800 卢布,他觉得"高得离谱"。</li>
+<li>Bernoulli 算出分界线:若 Caius 除货外还有 <strong>5043 卢布</strong>以上家底,不买保险是对的。</li>
+<li>低于这个数,就该买。</li>
+<li>而对承保人:家底至少 <strong>14243 卢布</strong>,接这单才理性。</li>
+<li>保费 600 卢布时买方门槛 20478、卖方门槛 29878。</li>
+<li>保费低于 500 卢布,"再富的人独自承保都不妥" <span class="badge b1">一手</span>。</li>
+</ul>
+</li>
+<li>这组数字第一次把"<strong>同一张不公平的合同,对不同家底的人有不同理性答案</strong>"算成了具体的门槛。
+<ul>
+<li>保险与赌博这对镜像(买保险=花钱消除风险,买彩票=花钱购买风险)在 Bernoulli 这里同源于一个凹函数。</li>
+<li>经典谜题"人为什么同时买保险又买彩票",1738 年已有第一块基石 <span class="badge b1">一手</span>(算例)/<span class="badge b3">中等</span>(后世问题表述)。</li>
+</ul>
+</li>
+<li><strong>分散运输</strong>(§16):
+<ul>
+<li>Sempronius 在国外有价值 8000 金币的货,海运回国,十船一沉。</li>
+<li>全押一条船,期望价值 6751;分装两船,7033。</li>
+<li>船数越多越好,上界 7200。</li>
+<li>这是"不要把鸡蛋放在一个篮子里"的第一次定量论证,后来成为组合分散化思想的前身 <span class="badge b1">一手</span>(算例)/<span class="badge b3">中等</span>(思想史定位)。</li>
+</ul>
+</li>
+<li><strong>谁该做什么由家底决定</strong>(§14):
+<ul>
+<li>"有些人投资于一件前途未卜的事业是合理的,而对另一些人不合理"。</li>
+<li>原文说这句"实践中公认"的话从此有了理论解释 <span class="badge b1">一手</span>。</li>
+</ul>
+</li>
+</ul>
+
+<h2 id="examples">简单例子</h2>
+
+<h3>例一:月薪 5000 涨 1000,vs 月薪 10 万涨 1000</h3>
+
+<ul>
+<li>同是 1000 元,前者月入 +20%,后者 +1%。</li>
+<li>Bernoulli 的假设说:你感受到的"变好程度"不跟<strong>涨的绝对额</strong>走,跟<strong>它相对你已有家底的比例</strong>走。</li>
+<li>对数函数 u = ln(x) 恰好把这个感受编码成了数学:
+<ul>
+<li>从 5000 涨到 6000,效用增量 ln(6000/5000) ≈ 0.182。</li>
+<li>从 100,000 涨到 101,000,增量 ln(101000/100000) ≈ 0.010。</li>
+<li><strong>差 18 倍</strong>。</li>
+</ul>
+</li>
+<li>这就是为什么同一个 offer,对实习生是惊喜、对高管是噪音。
+<ul>
+<li>不是高管心态不好,是效用函数的形状如此。</li>
+<li>当然,这是模型不是人性定律;真实的人还有适应性、比较对象等 Bernoulli 没建模的因素 <span class="badge b3">中等</span>。</li>
+</ul>
+</li>
+</ul>
+
+<h3>例二:100 元红包,对大学生和对身家百亿的富豪不是一回事</h3>
+
+<ul>
+<li>按期望值框架,100 元就是 100 元,人人等价。</li>
+<li>按对数效用:
+<ul>
+<li>设学生家底 5000,红包让 ln(x) 增加约 ln(5100/5000) ≈ 0.0198。</li>
+<li>富豪家底 10<sup>10</sup>,增量约 10<sup>−8</sup>——<strong>差百万倍量级</strong>。</li>
+</ul>
+</li>
+<li>所以"这红包对你重要还是对他重要"有一个 Bernoulli 式答案:看它在各自 log 财富曲线上抬升了多少。</li>
+<li>同一逻辑反过来解释保险:
+<ul>
+<li>学生花 10 元给 3000 元的手机买盗抢险——损失的 10 元在低处,掉下去疼。</li>
+<li>富豪根本不用买——这就是 §15 的 Caius 门槛在生活里的样子。</li>
+</ul>
+</li>
+</ul>
+
+<h3>例三(原文的,更狠):白捡的两万金币彩票</h3>
+
+<ul>
+<li>穷人捡到"五五开:0 或 20,000 金币"的彩票,9000 金币的报价该不该接?</li>
+<li>期望值说要再等等(期望 10,000 &gt; 9,000)。</li>
+<li>Bernoulli 说:<strong>接</strong>。
+<ul>
+<li>对家底近零的人,9000 与 20,000 的效用差距远小于 0 与 9000 的差距。</li>
+<li>为一个"更上一层的锦上添花"去冒跌回原点的险,不划算。</li>
+</ul>
+</li>
+<li>同一天,富人买下这张彩票才是对的。</li>
+<li>同一样东西、同一时刻、两种理性——期望值框架根本写不出这句话 <span class="badge b1">一手</span>(题设与结论)。</li>
+</ul>
+
+<h2 id="grading">证据分级</h2>
+
+<ul>
+<li><span class="badge b1">一手</span> 本次对照 1954 英译全文逐段核对的内容:
+<ul>
+<li>期望值法则的 §1–§2 概括;</li>
+<li>§3 穷人彩票例与"价值基于效用"结论句;</li>
+<li>§4 道德期望定义与 <em>emolumentum medium</em> 译注;</li>
+<li>§5 富裕囚犯、乞丐与负债者的财富定义、"边际效用与已有财富成反比"假设原文;</li>
+<li>§6 金币/半金币校准例;</li>
+<li>§7–§9 一般凹曲线理论及两条推论(曲线变直线退回期望值法则);</li>
+<li>§10 对数效用推导(文字与假设,Menger 脚注 10 佐证);</li>
+<li>§12 几何平均法则原文;</li>
+<li>§13 骰子告诫与 86.6/13、6 金币算例;</li>
+<li>§14 "押上全部家产者如傻子";</li>
+<li>§15 Caius 保险全部数值(5043/14243/20478/29878/500);</li>
+<li>§16 Sempronius 6751/7033/7200;</li>
+<li>§17 圣彼得堡赌局题设、Nicolas 的 20 金币信、论文史;</li>
+<li>§18–§19 求解与 2/3/4/6 金币数值表;</li>
+<li>§19 末段 Nicolas 1732 年回信立场与 Cramer 1728 年信全文英译(含 2<sup>24</sup> 截断、13 金币、√ 效用下的 2.9);</li>
+<li>Bernoulli 对 Cramer 的 12 vs 13 异议;</li>
+<li>译本编者注、译者注、传记注、4 条 Menger 脚注、参考文献表(Pringsheim 1896、Malfatti 1782、Karl Menger 1934、vNM 1947 第二版、Arrow 1951、Allais 1953、Friedman &amp; Savage 1952 等)。</li>
+</ul>
+</li>
+<li><span class="badge b2">强</span>
+<ul>
+<li>JSTOR 与 Econometrica 学会官网条目对卷期页码的确认;</li>
+<li>圣彼得堡悖论 1713 年出处(Cramer 信+译注+Archive 条目三方一致);</li>
+<li>Daniel Bernoulli 生卒年与生平轮廓(译本传记注+Archive 条目一致)。</li>
+</ul>
+</li>
+<li><span class="badge b3">中等</span>
+<ul>
+<li>拉丁原文与英译的出入(未逐句比对拉丁文本);</li>
+<li>论文至迟 1731 年底完成的提交时间考据(靠卷扉题记与一封 1732 年信推定);</li>
+<li>边际效用学派与 Bernoulli 的直接文献承继细节;</li>
+<li>Ole Peters 遍历性批评的内容;</li>
+<li>§19 中"a 无穷大时买价与持有估值趋于相等"的精确条件。</li>
+</ul>
+</li>
+<li><span class="badge b4">争议</span>
+<ul>
+<li>对数效用假设本身的合理性(见下节 Menger 1934 的"超级悖论"反例);</li>
+<li>Bernoulli 解与 Cramer 截断解谁更接近"人的真实评价"(Bernoulli 本人在 §19 末对 Cramer 的 12/13 异议就是第一场争论)。</li>
+</ul>
+</li>
+<li><span class="badge bd">D</span>
+<ul>
+<li>"1731 年 vs 1732 年"Nicolas 提问信的精确时间口径;</li>
+<li>Jevons/Carl Menger/Walras 是否、何处直接引用过 Bernoulli 1738。</li>
+</ul>
+</li>
+</ul>
+
+<h2 id="criticism">后续批评与修正</h2>
+
+<ol>
+<li><strong>沉睡了约一个半世纪,然后被三个人同时捡起</strong>
+<ul>
+<li>1738 年之后,这篇论文在经济学里几乎无人问津。</li>
+<li>边际效用概念到 1870 年代才由 Jevons(《政治经济学理论》1871)、Carl Menger(《国民经济学原理》1871)、Walras(1874)各自独立重新发明。</li>
+<li>"效用随数量递减"从此变成经济学地基。</li>
+<li>说 Bernoulli 领先了主流经济学约 130 年并不夸张。</li>
+<li>1896 年 Pringsheim 的德译本副标题径直称它为"现代价值理论的基石(Die Grundlage der modernen Wertlehre)" <span class="badge b3">中等</span>(思想史通说)/<span class="badge b1">一手</span>(1896 译本标题出自 1954 参考文献表)。</li>
+<li>顺带分清两个 Menger:<strong>Karl Menger</strong>(1902–1985,数学家,维也纳学派成员,1954 译本的注者)和 <strong>Carl Menger</strong>(1840–1921,边际效用学派创始人之一)是两回事。</li>
+<li>1954 年译本能出版,靠的是数学家 Menger 的脚注;思想史提"边际革命"时说的是经济学家 Menger <span class="badge b1">一手</span>(译注)/<span class="badge b2">强</span>(人物常识)。</li>
+</ul>
+</li>
+<li><strong>Karl Menger 1934:对数效用救不了所有悖论(超级圣彼得堡)</strong>
+<ul>
+<li>Bernoulli 的解有个隐藏前提:效用函数虽递减但<strong>无界</strong>(log 没有上界)。</li>
+<li>Karl Menger 1934 年在《价值论中的不确定性要素》(1954 参考文献表原名列出,编者注称"对该问题文献最详尽的研究")指出:</li>
+<li>只要效用无界,就能构造出期望效用重新无穷的新赌局。</li>
+<li>把圣彼得堡赌局的奖金换成 2、4、16、256、…(平方叠代)之类的"超级倍增",对数效用下期望效用照样发散,悖论原地复活。</li>
+<li>要彻底堵死,必须给效用函数加<strong>有界性</strong>条件 <span class="badge b3">中等</span>(论证细节按二手转述,1934 原文未读;1934 论文存在性与地位为一手:参考文献表+编者注)。</li>
+<li>这条批评划出了 Bernoulli 解的真实边界:<strong>他给出的不是悖论的普遍解,而是一个"恰好让这一题收敛"的特例</strong>。</li>
+<li>后来 vNM 体系的处理方式(在公理层面约束偏好,同时对效用可加有界性条件)正是对这条裂缝的回应 <span class="badge b3">中等</span>。</li>
+</ul>
+</li>
+<li><strong>von Neumann &amp; Morgenstern 1944/1947:公理化再造</strong>
+<ul>
+<li>1954 编者注说得直白:对 Bernoulli 假说的近期兴趣"由它在 von Neumann &amp; Morgenstern《博弈论与经济行为》中的出现所唤醒"(注的是 1947 年第二版第 III 章与附录"效用的公理化处理")<span class="badge b1">一手</span>。</li>
+<li>vNM 与 Bernoulli 的关系,一句话:<strong>同一个数学对象,两种来源</strong>。</li>
+<li>Bernoulli 从一个心理学假设(边际效用递减)<strong>推</strong>出效用函数。</li>
+<li>vNM 从一组偏好公理(完备、传递、连续、独立性)<strong>反推</strong>出效用函数的存在,并证明它在正仿射变换下唯一。</li>
+<li>vNM 框架里期望效用 = Σ p<sub>i</sub>·u(x<sub>i</sub>) 的形式与 Bernoulli 的道德期望同构。</li>
+<li>但 vNM 效用不需要凹、不预设风险厌恶、也不是对"快乐强度"的物理猜想 <span class="badge b2">强</span>(格局共识)/<span class="badge b3">中等</span>(表述)。</li>
+<li>这个再造也改变了问题的性质:
+<ul>
+<li>Bernoulli 回答"人该怎么给风险定价";</li>
+<li>vNM 回答"什么样的偏好系统内部自洽"。</li>
+</ul>
+</li>
+<li><strong>风险厌恶从假设变成了公理的推论之一</strong>,而 Bernoulli 当年对凹曲线的一般处理(§7–§9,推论一)恰好预留了这个接口 <span class="badge b3">中等</span>。</li>
+</ul>
+</li>
+<li><strong>对数效用自身的两个老毛病</strong>
+<ul>
+<li><strong>财富必须为正</strong>:log(0) 无定义。</li>
+<li>Bernoulli 用"乞丐也有劳动能力"把人人为地推离零点(§5),这在概念上聪明、在数学上是个补丁 <span class="badge b1">一手</span>(§5 原文)/<span class="badge b3">中等</span>(评价)。</li>
+<li><strong>赌局可以大过身家</strong>:对数效用下,一个人对"五五开翻倍或归零"的赌局永远拒绝,无论赌注多小、身家多大。</li>
+<li>这与现实中人们的部分行为不符,后来成为替代效用函数(如幂效用、CRRA 族)的动机之一 <span class="badge b3">中等</span>(评价与后续发展)。</li>
+</ul>
+</li>
+<li><strong>Allais 1953 与行为经济学的挑战(点到为止)</strong>
+<ul>
+<li>1953 年 Allais 用悖论性反例攻击期望效用的独立性公理。</li>
+<li>1954 参考文献表已把他的两篇论文列在"异议观点(dissenting views)"名下 <span class="badge b1">一手</span>(参考文献表)。</li>
+<li>1979 年 Kahneman &amp; Tversky 的前景理论则从参照点、损失厌恶、概率权重三个方向系统性替代了期望效用的<strong>描述性</strong>地位。</li>
+<li>详见本仓库 <code>prospect-theory.md</code>,两文相隔 241 年,恰是"奠基—打脸"的一对。</li>
+<li>另有一条晚近路线值得一提:Ole Peters 等的遍历性经济学(2019, Nature Physics)。</li>
+<li>主张圣彼得堡悖论的根源不在心理效用,而在"期望值是系综平均、个人只有一条时间线"——用时间平均增长重新解释为何没人该玩。</li>
+<li>这是对 Bernoulli 解的当代挑战,本仓库未深入,存档备考 <span class="badge b3">中等</span>(未读原文)。</li>
+</ul>
+</li>
+</ol>
+
+<h2 id="misread">误解澄清</h2>
+
+<ol>
+<li><strong>误解:"Bernoulli 发明了圣彼得堡悖论。"</strong>
+<ul>
+<li>悖论是堂兄 <strong>Nicolas Bernoulli</strong>(Nicolaus I)1713 年在致 Montmort 信中提出的五道题之最后一题。</li>
+<li>原文写得明明白白:Cramer 信里说这是"你 1713 年 9 月 9 日写给 Montmort 先生的信中的问题"。</li>
+<li>§17 开头也自述:"我最尊敬的堂兄、著名的 Nicolas Bernoulli 曾把五道题提交给卓越的数学家 Montmort"。</li>
+<li>Daniel 的贡献是<strong>解</strong>,不是题。</li>
+<li>顺带,"圣彼得堡悖论"这个名字是后人起的(论文和赌局都与圣彼得堡科学院有关),不是 1713 或 1738 年当事人的用语 <span class="badge b1">一手</span>/<span class="badge b3">中等</span>(命名史)。</li>
+</ul>
+</li>
+<li><strong>误解:"效用 = 快乐,可以用心理测量仪量出来。"</strong>
+<ul>
+<li>Bernoulli 从没声称效用是可实测的心理量。</li>
+<li>他的操作定义是<strong>行为性的</strong>:一个赌局对你的"价值",等于那个与道德期望对应的金额——用你愿意接受什么、拒绝什么来反推。</li>
+<li>1954 参考文献表里 Alchian 的《效用的意义》("The Meaning of Utility", AER 1953)处理的就是这个测量哲学问题。</li>
+<li>把 Bernoulli 的 log 读成"快乐计读数",既超前(那是后来心理物理学的事)也错误(他给的是决策价值,不是感受强度)。</li>
+<li>§5 那个"囚犯宁要赎身价"的例子更说明:效用甚至可以与即时的快乐背道而驰 <span class="badge b1">一手</span>(原文机制)/<span class="badge b3">中等</span>(测量哲学定位)。</li>
+</ul>
+</li>
+<li><strong>误解:"期望效用理论说人就'该'这么理性,连 Bernoulli 都这么认为。"</strong>
+<ul>
+<li>Bernoulli 的立场比这谦逊得多。</li>
+<li>§17 自承:"一个天生有相当判断力的人可能凭直觉已经实现并自发运用了我这里解释的很多内容",他说自己做的只是给常识"赋予精确性"。</li>
+<li>§3 说价值判断"因人而异"正是理论的出发点而非要消灭的对象。</li>
+<li>§14 甚至明说"有些人投资某事业合理、另一些人不合理"——<strong>理论的目的恰恰是承认并刻画人与人的不同</strong>,不是颁布统一的理性标准。</li>
+<li>把"规范模型"读成"人性判决书",是 1979 年那篇论文批判的对象之一,也是读者常犯的归因错误 <span class="badge b1">一手</span>。</li>
+</ul>
+</li>
+<li><strong>误解:"Bernoulli 用对数效用'解出'了圣彼得堡悖论,问题就此终结。"</strong>
+<ul>
+<li>他的解依赖两个可争议的承诺:效用无界(被 Karl Menger 1934 的超级悖论击穿)与财富为正(log 的定义域)。</li>
+<li>而且 Cramer 1728 年的截断方案、√ 效用方案给出的数值(13、2.9)与 Bernoulli 的答案(2/3/4/6,随家底变化)并不一致。</li>
+<li>Daniel 本人对 Cramer 还有 12 vs 13 的异议。</li>
+<li>悖论在 18 世纪没有终结,到 20 世纪甚至没有终结——它变成了一个<strong>检验任何决策理论的试金石</strong>,每套新理论都得来答一遍这道题 <span class="badge b1">一手</span>(原文内争论)/<span class="badge b3">中等</span>(Menger 细节)。</li>
+</ul>
+</li>
+</ol>
+
+<h2 id="ending">一段话收尾</h2>
+
+<p>这篇论文真正留下来的,不是 log,而是一个转身:<strong>别问东西值多少钱,问它对这个人、处在他的位置上,意味着什么。</strong></p>
+
+<p>价值从物品身上搬到了人和物品的关系上,价格与价值的古典二分从此有了数学形态。一百三十年后边际效用学派重新发明了它,两百年后 vNM 把它公理化成现代决策论的承重墙,又过了三十五年,卡尼曼和特沃斯基站在这堵墙上指出:人在真实世界里根本不是这么估值的——参照点不是总财富,损失比收益疼,小概率在心里被放大。1738 年的解和 1979 年的反例,读的是同一张赌桌上的同一个人:前者证明人可以如何理性,后者测量人实际如何行动。</p>
+
+<div class="footer">
+<p>解读完成于 2026-09-07。英译全文文本(Econometrica 22(1), 23–36)经网页渲染抓取 CTU Prague 托管扫描 PDF 获得;所有【一手】标注均可对照该文本复核;拉丁原件扫描存于 Internet Archive,未逐页比对。姊妹篇:<a href="prospect-theory.html"><code>prospect-theory.md</code></a>(Kahneman &amp; Tversky 1979,前景理论)——1738 年的奠基与 1979 年的反击,建议连读。</p>
+</div>
+
+</main>
+</body>
+</html>
