@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>前景理论 · Kahneman &amp; Tversky (1979) 解读</title>
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #f7f5f0;
+    --fg: #2a2723;
+    --muted: #6f6a62;
+    --card: #fffdf9;
+    --border: #e3ddd2;
+    --accent: #8a5a2b;
+    --quotebar: #c9a468;
+    --quotebg: #faf4e8;
+    --code-bg: #efe9dd;
+    --shadow: rgba(60, 50, 30, 0.08);
+    /* 证据分级 */
+    --ev1-fg: #1e6b3a; --ev1-bg: #e0f2e6; --ev1-bd: #9fceb0;
+    --ev2-fg: #1c4f8a; --ev2-bg: #dfeafa; --ev2-bd: #a3c2e8;
+    --ev3-fg: #7a5c00; --ev3-bg: #faf0cf; --ev3-bd: #dcc46e;
+    --ev4-fg: #99430a; --ev4-bg: #fde8d8; --ev4-bd: #e8b28c;
+    --evd-fg: #565650; --evd-bg: #e8e8e4; --evd-bd: #bdbdb6;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #1d1b18;
+      --fg: #ddd8cf;
+      --muted: #948e83;
+      --card: #26231f;
+      --border: #3a362f;
+      --accent: #d0a26a;
+      --quotebar: #8a6d3f;
+      --quotebg: #2a261f;
+      --code-bg: #302c25;
+      --shadow: rgba(0, 0, 0, 0.35);
+      --ev1-fg: #7fd39c; --ev1-bg: #1e3327; --ev1-bd: #3d5c48;
+      --ev2-fg: #8cb8ef; --ev2-bg: #1e2c40; --ev2-bd: #3d5470;
+      --ev3-fg: #ddc06a; --ev3-bg: #352c14; --ev3-bd: #5c4e26;
+      --ev4-fg: #e8a077; --ev4-bg: #38241466; --ev4-bd: #634428;
+      --evd-fg: #a8a8a0; --evd-bg: #2c2c29; --evd-bd: #4a4a44;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+    font-size: 16px;
+    line-height: 1.8;
+  }
+  main {
+    max-width: 42rem;
+    margin: 0 auto;
+    padding: 2.5rem 1.25rem 4rem;
+  }
+  h1 { font-size: 1.7rem; line-height: 1.4; margin: 0 0 0.5rem; }
+  h2 { font-size: 1.32rem; margin: 3rem 0 0.9rem; padding-bottom: 0.35rem; border-bottom: 1px solid var(--border); }
+  h3 { font-size: 1.08rem; margin: 2rem 0 0.6rem; color: var(--accent); }
+  p { margin: 0.7rem 0; }
+  ul, ol { padding-left: 1.4rem; margin: 0.6rem 0; }
+  li { margin: 0.3rem 0; }
+  li > ul, li > ol { margin: 0.25rem 0; }
+  hr { border: none; border-top: 1px solid var(--border); margin: 2.6rem 0; }
+  strong { color: var(--fg); }
+  em { color: var(--muted); }
+  code {
+    font-family: ui-monospace, Consolas, "Courier New", monospace;
+    font-size: 0.85em;
+    background: var(--code-bg);
+    padding: 0.1em 0.35em;
+    border-radius: 4px;
+    overflow-wrap: break-word;
+  }
+  .subtitle { color: var(--muted); margin-bottom: 1.5rem; }
+  .meta-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--quotebar);
+    border-radius: 8px;
+    padding: 1rem 1.2rem;
+    margin: 1.2rem 0;
+    box-shadow: 0 1px 3px var(--shadow);
+    font-size: 0.94rem;
+  }
+  .meta-card p { margin: 0.35rem 0; }
+  .toc {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem 1.2rem;
+    margin: 1.4rem 0 0;
+    font-size: 0.94rem;
+  }
+  .toc ol { margin: 0.3rem 0 0.1rem; padding-left: 1.3rem; }
+  .toc a { color: var(--accent); text-decoration: none; }
+  .toc a:hover { text-decoration: underline; }
+  blockquote {
+    margin: 1rem 0;
+    padding: 0.7rem 1.1rem;
+    background: var(--quotebg);
+    border-left: 4px solid var(--quotebar);
+    border-radius: 0 6px 6px 0;
+    color: var(--fg);
+  }
+  blockquote p { margin: 0.3rem 0; }
+  .scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 1rem 0; }
+  table {
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    min-width: 100%;
+  }
+  th, td { border: 1px solid var(--border); padding: 0.4rem 0.65rem; text-align: left; vertical-align: top; white-space: nowrap; }
+  td.wrap { white-space: normal; min-width: 16rem; }
+  th { background: var(--code-bg); }
+  .badge {
+    display: inline-block;
+    font-size: 0.76rem;
+    line-height: 1.5;
+    font-weight: 600;
+    padding: 0 0.5em;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    vertical-align: 0.08em;
+    white-space: nowrap;
+  }
+  .b1 { color: var(--ev1-fg); background: var(--ev1-bg); border-color: var(--ev1-bd); }
+  .b2 { color: var(--ev2-fg); background: var(--ev2-bg); border-color: var(--ev2-bd); }
+  .b3 { color: var(--ev3-fg); background: var(--ev3-bg); border-color: var(--ev3-bd); }
+  .b4 { color: var(--ev4-fg); background: var(--ev4-bg); border-color: var(--ev4-bd); }
+  .bd { color: var(--evd-fg); background: var(--evd-bg); border-color: var(--evd-bd); }
+  figure { margin: 1.4rem 0; text-align: center; }
+  figure svg { max-width: 100%; height: auto; }
+  figcaption { font-size: 0.85rem; color: var(--muted); margin-top: 0.4rem; }
+  .footer { color: var(--muted); font-size: 0.88rem; border-top: 1px solid var(--border); padding-top: 1rem; margin-top: 3rem; }
+</style>
+</head>
+<body>
+<main>
+
+<h1>前景理论:人在不确定下到底怎么决定</h1>
+<p class="subtitle">论文解读 / 2026-09</p>
+
+<div class="meta-card">
+<p><strong>解读对象</strong>:Daniel Kahneman &amp; Amos Tversky, "Prospect Theory: An Analysis of Decision under Risk", <em>Econometrica</em>, 1979, Vol. 47(2), pp. 263–291.</p>
+<p><strong>证据分级约定</strong>(全文行内标注,沿用本仓库体系):</p>
+<ul>
+<li><span class="badge b1">一手</span> 本次已读到原文全文并逐段核对的内容(可复核)</li>
+<li><span class="badge b2">强</span> 权威工具书 / 官方机构 / 多个独立来源一致</li>
+<li><span class="badge b3">中等</span> 普遍转述或单一可信来源,方向可信,数字留余地</li>
+<li><span class="badge b4">争议</span> 口径分歧明显或方法论受质疑</li>
+<li><span class="badge bd">D</span> 本次未能溯源到原文,存疑待考</li>
+</ul>
+</div>
+
+<nav class="toc">
+<strong>目录</strong>
+<ol>
+<li><a href="#method">研究方法:我怎么找到并读到这篇论文</a></li>
+<li><a href="#archive">论文档案</a></li>
+<li><a href="#question">它在回答什么问题</a></li>
+<li><a href="#table14">十四个问题总表(一手数据速查)</a></li>
+<li><a href="#reading">口语化解读</a></li>
+<li><a href="#glossary">术语速查表</a></li>
+<li><a href="#quotes">原文金句(逐字,均可复核)</a></li>
+<li><a href="#examples">简单例子</a></li>
+<li><a href="#grading">证据分级(汇总)</a></li>
+<li><a href="#timeline">前后文坐标:这篇论文站在哪</a></li>
+<li><a href="#criticism">后续批评与修正</a></li>
+<li><a href="#misread">误解澄清</a></li>
+<li><a href="#ending">一段话收尾</a></li>
+</ol>
+</nav>
+
+<h2 id="method">研究方法:我怎么找到并读到这篇论文</h2>
+
+<ol>
+<li><strong>原文获取</strong>
+<ul>
+<li>用 TinyFish search 搜 "Kahneman Tversky 1979 Prospect Theory Econometrica full text PDF",命中 MIT 课程存档的原文 PDF、Econometrica 学会官方条目页、普林斯顿的 Kahneman 文献库等。</li>
+<li>先用 curl 直接下 MIT 的 PDF:被 Akamai 拦(Access Denied)。换普林斯顿 <code>kahneman.scholar.princeton.edu/document/11</code>:返回的是 Cloudflare 人机验证页,不是 PDF。又试了两个大学教学镜像,均已 404。</li>
+<li>最后改用网页渲染抓取(web_reader)读 MIT 存档 PDF,拿到<strong>全文文本</strong>:正文(263–289 页)、附录(公理化骨架)、参考文献表(48 条)都在,不是节选 <span class="badge b1">一手</span>。</li>
+<li>文中所有标 <span class="badge b1">一手</span> 的数字、问题编号、百分比和引文都出自这份全文文本,可复核。</li>
+</ul>
+</li>
+<li><strong>文本质量说明(诚实交代)</strong>
+<ul>
+<li>这份全文是 PDF 转 markdown,带 OCR 痕迹:希腊字母 π 被转成 "7T"/"X"/"Ir"/"v" 混排,个别数字错位(已按上下文与原文数学逻辑校正,如 Problem 12 的 N=68)。</li>
+<li>因此本文只对"OCR 干扰小、且能被上下文校验"的短句做逐字引用;所有逐字引文均能在原文文本中找到,未做任何拼合改写 <span class="badge b1">一手</span>。拿不准的细节一律降级标注。</li>
+</ul>
+</li>
+<li><strong>版本鉴别</strong>
+<ul>
+<li>卷期页码 47(2), 263–291,与 Econometrica 学会官网条目、RePEc/EconPapers 条目一致 <span class="badge b1">一手</span>+<span class="badge b2">强</span>。</li>
+<li>原文脚注:稿件 1977 年 11 月收到,终稿 1978 年 3 月收到;作者署名单位为 University of British Columbia 与 Stanford University <span class="badge b1">一手</span>。</li>
+<li>经费脚注:Harry F. Guggenheim 基金会资助,另有美国国防部 ARPA 项目(海军研究办公室合同 N00014-78-C-0100,经 Decisions and Designs Inc. 转包给 Perceptronics Inc.),并感谢斯坦福行为科学高等研究中心 <span class="badge b1">一手</span>——行为经济学黎明期,钱一部分是军方出的。</li>
+<li>附录末尾致谢 David H. Krantz 帮助形成公理化部分 <span class="badge b1">一手</span>。</li>
+</ul>
+</li>
+<li><strong>交叉核实(二手侧)</strong>
+<ul>
+<li>Allais 1953 悖论出处(Allais, "Le Comportement de l'Homme Rationnel devant le Risque", <em>Econometrica</em> 21, 503–546):出自原文参考文献表 <span class="badge b1">一手(参考文献表)</span>。</li>
+<li>"伪确定性"(pseudo-certainty)的完整论证出自 Tversky &amp; Kahneman 1981 年 <em>Science</em> 框架效应论文(Science 211(4481), 453–458):PubMed 官方记录核实了卷期页码 <span class="badge b2">强</span>;"伪确定性"一词首出于该文的说法按 <span class="badge b3">中等</span> 标注(该文 PDF 未逐字通读)。</li>
+<li>损失厌恶系数 λ=2.25 的出处:Tversky &amp; Kahneman 1992 累积前景理论论文——Warwick 大学托管的一篇 2024 年元分析原文开头就明确写"widely accepted magnitude … λ = 2.25 obtained by Tversky and Kahneman (1992)" <span class="badge b2">强(出处归属)</span>/<span class="badge b3">中等(1992 原文未读)</span>。</li>
+<li>损失厌恶复制争议双方:Gal &amp; Rucker 2018 "The Loss of Loss Aversion"(Journal of Consumer Psychology,SSRN 记录核实存在)<span class="badge b2">强(存在)</span>/<span class="badge b3">中等(原文未读)</span>;Walasek, Mullett &amp; Stewart 的元分析 "A meta-analysis of loss aversion in risky contexts"(Warwick 托管全文,期刊为 Journal of Economic Psychology)<span class="badge b3">中等</span>;Yechiam 等 2025 年的再元分析 "Loss Aversion is Not Robust: A Re-Meta-Analysis"(Technion 托管 PDF)<span class="badge b3">中等</span>。</li>
+</ul>
+</li>
+<li><strong>本次实际用到的来源清单</strong>
+<ul>
+<li>原文全文(主要文本):MIT 课程存档 PDF,<code>web.mit.edu/curhan/www/docs/Articles/15341_Readings/Behavioral_Decision_Theory/Kahneman_Tversky_1979_Prospect_theory.pdf</code>(curl 被拦,经网页渲染抓取)。</li>
+<li>条目核对:Econometrica 学会官网论文页;RePEc/EconPapers 条目 <code>RePEc:ecm:emetrp:v:47:y:1979:i:2:p:263-91</code>。</li>
+<li>1981 框架论文:PubMed 记录 <code>pubmed.ncbi.nlm.nih.gov/7455683</code>(Science 211(4481), 453-8)。</li>
+<li>损失厌恶之争:Warwick 托管的元分析全文(<code>wrap.warwick.ac.uk/id/eprint/185745</code>,Journal of Economic Psychology);Technion 托管的再元分析(<code>yeldad.net.technion.ac.il</code>,2025);Gal &amp; Rucker 2018 的 SSRN 页(abstract 3049660)。</li>
+</ul>
+</li>
+<li><strong>没核实的</strong>
+<ul>
+<li>任务书点名提到的 "Parsey &amp; Brown 2020 复制失败":<strong>检索未能定位到该署名、该年份的论文</strong>,无法确认存在。本文不引用它,改以可核实的 Gal &amp; Rucker 2018、两项元分析之争呈现这场争论,并如实记此存疑 <span class="badge bd">D</span>。</li>
+<li>Abdellaoui、Bleichrodt 等 2000 年代对损失厌恶的直接测量方法(tractable method 一类论文):未读原文,只按二手综述方向转述 <span class="badge b3">中等</span>。</li>
+<li>Tversky &amp; Kahneman 1992 论文的完整参数(α=β≈0.88 等)与被试规模:常识转述,原文未读 <span class="badge b3">中等</span>。</li>
+<li>卡尼曼 2002 年获诺贝尔经济学奖、特沃斯基 1996 年 6 月病逝故未能 share 奖(诺奖不追授):多源一致的公共事实 <span class="badge b2">强</span>。</li>
+<li>原文中 Markowitz 1952、Edwards 1962、Williams 1966、Fishburn &amp; Kochenberger、McGlothlin 1956、Lichtenstein &amp; Slovic 1971、Grether &amp; Plott 等被引文献均只读原文中的转述,未回溯原文 <span class="badge b1">一手(转述)</span>+<span class="badge b3">中等(原文)</span>。</li>
+</ul>
+</li>
+</ol>
+
+<h2 id="archive">论文档案</h2>
+
+<ul>
+<li><strong>题目</strong>:Prospect Theory: An Analysis of Decision under Risk(前景理论:风险条件下的决策分析)<span class="badge b1">一手</span>。</li>
+<li><strong>作者</strong>:Daniel Kahneman(英属哥伦比亚大学)、Amos Tversky(斯坦福大学)<span class="badge b1">一手</span>。</li>
+<li><strong>发表</strong>:Econometrica, 1979 年 3 月, Vol. 47, No. 2, pp. 263–291<span class="badge b1">一手</span>。</li>
+<li><strong>时间线</strong>:稿件 1977-11 收到,终稿 1978-03 收到,1979-03 刊出<span class="badge b1">一手</span>。</li>
+<li><strong>摘要自己就把卖点列全了</strong>(逐字,OCR 干扰小的部分):人"underweight outcomes that are merely probable in comparison with outcomes that are obtained with certainty"(确定效应);"The value function is normally concave for gains, commonly convex for losses, and is generally steeper for losses than for gains";"Decision weights are generally lower than the corresponding probabilities, except in the range of low probabilities"——而"Overweighting of low probabilities may contribute to the attractiveness of both insurance and gambling"<span class="badge b1">一手</span>。</li>
+<li><strong>被试与方法(原文交代得很清楚)</strong>
+<ul>
+<li>学生和大学教员,假想选择题问卷,匿名,明确告知没有正确答案,目的是研究人怎么在风险选项间做选择 <span class="badge b1">一手</span>。</li>
+<li>金额是以色列货币;原文特别提示:家庭净收入中位数约每月 3,000 以色列镑,用来帮被试校准数额感 <span class="badge b1">一手</span>。</li>
+<li>每本问卷最多十几个问题,多个版本随机化(顺序不同、左右位置互换),防位置效应 <span class="badge b1">一手</span>。</li>
+<li>部分问题也给了斯德哥尔摩大学和密歇根大学的学生/教员团体,"The pattern of results was essentially identical to the results obtained from Israeli subjects"<span class="badge b1">一手</span>。</li>
+</ul>
+</li>
+<li><strong>背景:这篇论文在打谁</strong>
+<ul>
+<li>打的是期望效用理论:冯·诺依曼–摩根斯坦 1944 的公理化体系 + Savage 1954,当时既是理性选择的规范模型,也被当成人实际如何决策的描述模型广泛应用。原文开篇原话:它"has been generally accepted as a normative model of rational choice, and widely applied as a descriptive model of economic behavior"<span class="badge b1">一手</span>。</li>
+<li>早在 1953 年,法国经济学家 Maurice Allais 就构造出违反期望效用公理的反例(阿莱斯悖论),但几十年里被主流当作"病态特例"处理。本文第一组实验就是阿莱斯悖论的变体(改成了中等金额,便于学生被试理解)<span class="badge b1">一手</span>。</li>
+<li>1979 年是行为经济学的黎明期:认知偏差研究(Tversky &amp; Kahneman 1974 "Judgment under Uncertainty", Science 185,原文参考文献 [45])已经出名,但还没有一套能跟期望效用正面竞争的替代决策模型。这篇就是那套替代品 <span class="badge b1">一手</span>+<span class="badge b2">强</span>。</li>
+</ul>
+</li>
+<li><strong>后世</strong>
+<ul>
+<li>2002 年卡尼曼获诺贝尔经济学奖(官方表述大意为"把来自心理学研究的洞察整合进经济科学");特沃斯基 1996 年去世,诺奖不追授,他未能 share <span class="badge b2">强</span>。</li>
+<li>这篇是经济学史上被引最高的论文之一(RePEc 条目显示被引近十万次量级)<span class="badge b3">中等</span>。</li>
+</ul>
+</li>
+</ul>
+
+<h2 id="question">它在回答什么问题</h2>
+
+<ul>
+<li>一句话:<strong>人在面对风险时"实际上"怎么决定,而不是"应该"怎么决定。</strong></li>
+<li>记号约定(原文):一个"前景"(prospect)就是一张彩票合同 (x₁, p₁; …; xₙ, pₙ)——以概率 pᵢ 拿到 xᵢ;(x, p) 表示 p 概率赢 x、其余拿 0;(x) 表示确定拿 x <span class="badge b1">一手</span>。</li>
+<li>原文把矛头指向期望效用理论的三大支柱 <span class="badge b1">一手</span>:
+<ol>
+<li><strong>期望原则(expectation)</strong>:一个赌局的效用 U = 各结局效用按概率加权和;</li>
+<li><strong>资产整合原则(asset integration)</strong>:判断接不接一个赌局,是把它并进总资产 w 后看 U(w + 赌局) 是否超过 U(w)——效用函数定义在"最终财富状态"上,不定义在收益和损失上;</li>
+<li><strong>风险厌恶(risk aversion)</strong>:u 对财富是凹的(u″ &lt; 0),所以"确定拿 x 优于任何期望值为 x 的赌局"。原文称之为"关于风险选择最广为人知的概括",可上溯到 18 世纪圣彼得堡悖论时代对凹效用函数的发明(现代处理:Pratt 1964、Arrow 1971)<span class="badge b1">一手</span>。</li>
+</ol>
+</li>
+<li>作者的结论句(逐字):"utility theory, as it is commonly interpreted and applied, <strong>is not an adequate descriptive model</strong>"<span class="badge b1">一手</span>。</li>
+<li>论文结构:第 2 节"批评"(四组现象:确定效应、反射效应、概率性保险、分离效应),第 3 节"理论"(编辑 + 评价,价值函数 + 权重函数),第 4 节"讨论"(风险态度、参照点移动、扩展方向),附录给公理化骨架 <span class="badge b1">一手</span>。</li>
+<li>特别值得记的一笔:<strong>作者在 1979 年就预先写好了方法论自辩</strong>。原文有一整段承认"对假想选择的依赖 raises obvious questions regarding the validity of the method and the generalizability of the results",然后逐条对比:实地研究(现场数据)只能给定性预测做粗测,因为概率和效用在实地里测不准;实验室真钱实验虽能精确测量,却都是"contrived gambles for small stakes"加大量重复,限制可推广性。假想问卷是"by default"最简可行的方案,靠两条假设支撑:被试大致知道自己会怎么选,且没有特殊理由伪装偏好 <span class="badge b1">一手</span>。</li>
+<li style="list-style:none">也就是说,"假设性小额问题"这个后来最常被批评的软肋,作者当年自己先写在了纸上。这场批评的完整轮回见后文「后续批评与修正」。</li>
+</ul>
+
+<h2 id="table14">十四个问题总表(一手数据速查)</h2>
+
+<p>原文的问题编号、选项、被试数 N 与选择百分比,全部照录 <span class="badge b1">一手</span>(星号 = 在 .01 水平显著):</p>
+
+<div class="scroll">
+<table>
+<tr><th>问题</th><th>选项</th><th>N</th><th>结果</th></tr>
+<tr><td>1</td><td class="wrap">A: 33% 赢 2500 + 66% 赢 2400;B: 稳拿 2400</td><td>72</td><td>[18 / <strong>82*</strong>]</td></tr>
+<tr><td>2</td><td class="wrap">C: 33% 赢 2500 + 67% 得 0;D: 34% 赢 2400 + 66% 得 0</td><td>72</td><td>[<strong>83*</strong> / 17]</td></tr>
+<tr><td>3</td><td class="wrap">A: 80% 赢 4000;B: 稳拿 3000</td><td>95</td><td>[20 / <strong>80*</strong>]</td></tr>
+<tr><td>4</td><td class="wrap">C: 20% 赢 4000;D: 25% 赢 3000</td><td>95</td><td>[<strong>65*</strong> / 35]</td></tr>
+<tr><td>5</td><td class="wrap">A: 50% 赢三周英法意游;B: 稳赢一周英游</td><td>72</td><td>[22 / <strong>78*</strong>]</td></tr>
+<tr><td>6</td><td class="wrap">C: 5% 赢三周英法意游;D: 10% 赢一周英游</td><td>72</td><td>[<strong>67*</strong> / 33]</td></tr>
+<tr><td>7</td><td class="wrap">A: 45% 赢 6000;B: 90% 赢 3000</td><td>66</td><td>[14 / <strong>86*</strong>]</td></tr>
+<tr><td>8</td><td class="wrap">C: 0.1% 赢 6000;D: 0.2% 赢 3000</td><td>66</td><td>[<strong>73*</strong> / 27]</td></tr>
+<tr><td>9</td><td class="wrap">概率性保险(半价,出险时 50% 概率要补缴才赔):买吗?</td><td>95</td><td>[20 买 / <strong>80*</strong> 不买]</td></tr>
+<tr><td>10</td><td class="wrap">两阶段:75% 概率出局,25% 进入"80% 赢 4000 vs 稳拿 3000"</td><td>141</td><td>[<strong>78</strong> 选稳拿 / 22]</td></tr>
+<tr><td>11</td><td class="wrap">先白给 1000,再选:A: 50% 赢 1000;B: 稳拿 500</td><td>70</td><td>[16 / <strong>84*</strong>]</td></tr>
+<tr><td>12</td><td class="wrap">先白给 2000,再选:C: 50% 亏 1000;D: 稳亏 500</td><td>68</td><td>[<strong>69*</strong> / 31]</td></tr>
+<tr><td>13</td><td class="wrap">25% 赢 6000;或 25% 赢 4000 + 25% 赢 2000</td><td>68</td><td>[18 / <strong>82*</strong>]</td></tr>
+<tr><td>13'</td><td class="wrap">25% 亏 6000;或 25% 亏 4000 + 25% 亏 2000</td><td>64</td><td>[<strong>70*</strong> / 30]</td></tr>
+<tr><td>14</td><td class="wrap">0.1% 赢 5000;或稳拿 5</td><td>72</td><td>[<strong>72*</strong> / 28]</td></tr>
+<tr><td>14'</td><td class="wrap">0.1% 亏 5000;或稳亏 5</td><td>72</td><td>[17 / <strong>83*</strong>]</td></tr>
+</table>
+</div>
+
+<p>镜像对(Table I,损失侧)补两组原文给的数 <span class="badge b1">一手</span>:3′(80% 亏 4000 vs 稳亏 3000,N=95):[<strong>92</strong>*/8];7′(90% 亏 3000 vs 45% 亏 6000,N=66):[8 / <strong>92*</strong>];8′(0.2% 亏 3000 vs 0.1% 亏 6000,N=66):[<strong>70</strong>*/30]。</p>
+
+<h2 id="reading">口语化解读</h2>
+
+<h3>全文的骨架:先编辑,再打分</h3>
+
+<p>前景理论把一次决策拆成两个阶段 <span class="badge b1">一手</span>:</p>
+
+<ol>
+<li><strong>编辑阶段(editing)</strong>:人先把选项重新整理一遍,把问题变简单。原文列了六种操作:
+<ul>
+<li><strong>编码(coding)</strong>:把结局编码成"相对某个参照点的收益或损失",而不是最终财富——这是全文的地基;</li>
+<li><strong>合并(combination)</strong>:相同结局的概率合并,(200, .25; 200, .25) 简化成 (200, .50);</li>
+<li><strong>拆分(segregation)</strong>:把无风险成分拆出来,(300, .80; 200, .20) 看成"稳拿 200 + 80% 机会再赢 100";(-400, .40; -100, .60) 看成"稳亏 100 + 40% 概率再多亏 300";</li>
+<li><strong>取消(cancellation)</strong>:两个选项共有的成分直接丢掉不看(这正是分离效应的来源);</li>
+<li><strong>简化(simplification)</strong>:四舍五入,(101, .49) 大概会被看成"对半赢 100";极小概率的结局可能被直接丢弃;</li>
+<li><strong>优势侦测(detection of dominance)</strong>:一眼看出明显更差的选项,直接淘汰,不再打分。</li>
+<li>原文还补了一句诚实的话:这些操作有先后依赖,编辑的<strong>顺序</strong>不同,结果可以不同——比如 (500, .20; 101, .49) 若先把 (101, .49) 简化成"对半赢 100",就显得优于 (500, .15; 99, .51),不简化则不然。"详细研究超出本文范围"<span class="badge b1">一手</span>。</li>
+</ul>
+</li>
+<li><strong>评价阶段(evaluation)</strong>:对编辑好的选项打总分 V,选 V 最高的。总分由两把尺子相乘组合:
+<ul>
+<li><strong>价值函数 v(x)</strong>:每个结局值多少"心理值"——注意 x 是相对参照点的变化量,不是最终财富;</li>
+<li><strong>决策权重 π(p)</strong>:每个概率在心理上"算多大"——注意它不是概率,不遵守概率公理。</li>
+<li><strong>常规赌局</strong>(既有正又有负的结局,或概率和小于 1):V = π(p)·v(x) + π(q)·v(y),边界条件 v(0)=0、π(0)=0、π(1)=1<span class="badge b1">一手</span>。</li>
+<li><strong>全正或全负的赌局</strong>(strictly positive/negative, p+q=1):编辑时先拆出无风险成分,评价规则是 V = v(y) + π(p)·[v(x) − v(y)],其中 y 是那个必然到手的较小额。例如 V(400, .25; 100, .75) = v(100) + π(.25)·[v(400) − v(100)]。要点:稳拿的部分不乘权重,只有"风险增量"乘 π <span class="badge b1">一手</span>。原文顺带证明:这条公式与公式 (1) 只在 π(p)+π(1−p)=1 时等价——而次确定性恰恰说这条件一般不成立。</li>
+</ul>
+</li>
+</ol>
+<p>阅读提示:后面所有现象,都可以回头看这两把尺子——确定效应、分离效应主要在"编辑"和"π 的形状"里;损失厌恶在"v 的形状"里。</p>
+
+<h3>确定效应(certainty effect):人对"确定"过度加权</h3>
+
+<ul>
+<li>原文问题 1/2(阿莱斯悖论的变体,N=72)<span class="badge b1">一手</span>:
+<ul>
+<li>问题 1:A = 33% 赢 2,500、66% 赢 2,400;B = 稳拿 2,400。结果 <strong>82% 选 B</strong>。</li>
+<li>问题 2:C = 33% 赢 2,500、67% 得 0;D = 34% 赢 2,400、66% 得 0。结果 <strong>83% 选 C</strong>。</li>
+<li>代数上看矛盾:选 B 意味着 u(2400) &gt; .33u(2500) + .66u(2400),整理得 .34u(2400) &gt; .33u(2500);而选 C 恰好要求反向不等式。期望效用的期望原则同时被两个多数选择踩住。</li>
+<li>矛盾点在哪:问题 2 就是把问题 1 里"66% 赢 2,400"这条共有成分砍掉。砍掉后,从"100% 拿到"降到"34% 拿到"的心理冲击,远大于从 66% 降到 33%——<strong>确定这个性质本身被额外加权了</strong>。多数被试(61%)在两题都做了众数选择,说明这是稳定的个体模式而非噪音 <span class="badge b1">一手</span>。</li>
+</ul>
+</li>
+<li>更简版问题 3/4(N=95):稳拿 3,000 vs 80% 赢 4,000,<strong>80% 选稳拿</strong>;但 25% 赢 3,000 vs 20% 赢 4,000,<strong>65% 反过来选 4,000</strong>。
+<ul>
+<li>代数版:选 B 意味着 u(3000)/u(4000) &gt; 4/5;选 C 意味着反向。C = (A, .25),D = (B, .25)——期望效用的替代公理说"B 优于 A,则 (B, .25) 必优于 (A, .25)",被试不服从。原文的观察:"把赢的概率从 1.0 降到 .25 的影响,大于从 .8 降到 .2"<span class="badge b1">一手</span>。</li>
+</ul>
+</li>
+<li>不带钱也复现:问题 5/6(N=72),确定赢一周英法意三周旅游 vs 50% 赢三周游,78% 要确定的;可 5% 赢三周游 vs 10% 赢一周英国游,67% 要那个大而远的。旅游版本把"旅游代理常用话术"——把超值套餐包装成确定拥有——放到了实证透镜下(这句是评注,不是原文)<span class="badge b1">一手(数据)</span>。</li>
+<li>问题 7/8(N=66):90% 赢 3,000 vs 45% 赢 6,000,86% 选前者;但 0.2% 赢 3,000 vs 0.1% 赢 6,000,73% 选后者(要大额)。同样的"减半概率",在大概率端人们回避,在极小概率端人们无所谓——确定效应只在中高概率区间统治 <span class="badge b1">一手</span>。</li>
+<li>原文把这些违反压缩成一条经验规律:如果 (x, p) 等价于 (y, pq),那么 (y, pqr) 优于 (x, pr)(0 &lt; p, q, r &lt; 1)。即:同一比例的概率削减,发生在低概率端比发生在高概率端更伤 <span class="badge b1">一手</span>。</li>
+</ul>
+
+<h3>反射效应(reflection effect):收益怕风险,损失爱冒险</h3>
+
+<ul>
+<li>把上面问题的符号翻过来(收益变损失),偏好几乎精确镜像翻转。原文 Table I 的核心数据 <span class="badge b1">一手</span>:
+<ul>
+<li>80% 赢 4,000 vs 稳拿 3,000:80% 选稳拿;<strong>80% 亏 4,000 vs 稳亏 3,000:92% 选赌</strong>(哪怕赌局期望损失 −3,200 比稳亏 −3,000 更大);</li>
+<li>90% 赢 3,000 vs 45% 赢 6,000:86% 选稳;<strong>90% 亏 3,000 vs 45% 亏 6,000:92% 选赌</strong>;</li>
+<li>0.2% 赢 3,000 vs 0.1% 赢 6,000:73% 要 6,000;0.2% 亏 3,000 vs 0.1% 亏 6,000:70% 要稳亏 3,000(这就是保险心态)。</li>
+</ul>
+</li>
+<li>三个推论 <span class="badge b1">一手</span>:
+<ol>
+<li>收益域的风险厌恶和损失域的风险偏好是同一个心理机制(对确定的过度加权)的两面——确定性让收益更诱人,也让损失更可憎;</li>
+<li>反射效应顺手排除了一种辩护:"人们厌恶方差(均值–方差逻辑)"解释不了——稳亏 3,000 期望更高、方差更低,按该逻辑应该被选,但数据相反;</li>
+<li>损失域的风险偏好不是新发现:原文引 Markowitz 1952 早已注意;Williams 1966 的数据里同一批被试对 (100, .65; −100, .35) vs (0) 无差别(风险厌恶),对 (-200, .80) vs (-100) 也无差别(风险追求);Fishburn &amp; Kochenberger 的综述确认损失域风险追求普遍存在。</li>
+</ol>
+</li>
+<li>生活投影(评注):"亏损的股民拿不住现金、非要回本再走""快输光了反而 all in"——都是反射效应的日常脸孔。</li>
+</ul>
+
+<h3>分离效应(isolation effect):共有成分会被扔掉</h3>
+
+<ul>
+<li>问题 10(N=141)两阶段游戏 <span class="badge b1">一手</span>:第一阶段 75% 概率什么都没有、25% 进入第二阶段;进第二阶段后在"80% 赢 4,000"和"稳拿 3,000"里选,选择必须<strong>在游戏开始前</strong>做出。<strong>78% 选了稳拿 3,000。</strong>
+<ul>
+<li>但算总账,这跟问题 4(20% 赢 4,000 vs 25% 赢 3,000)一模一样——而问题 4 里 65% 选的是 4,000!人把两个选项共有的第一阶段直接扔掉,只看第二阶段,于是"3,000"在问题 10 里享受了它在问题 4 里没有的"确定"光环。</li>
+<li>原文用决策树点破要害:两个表述的最终概率和结局完全相同,唯一差别是<strong>决策节点画在哪</strong>(标准式里是在两个风险赌局间选;序列式里是在一个风险赌局和一个无风险结果间选)。实现手法是事件间的包含关系:"没赢 3,000"这个事件被包进"没赢 4,000"里。这违反了决策理论的底层假设——选择只应由最终状态的概率决定。</li>
+<li>原文还给了个商业版直觉:投资一个可能失败的项目,成功后在"固定回报"和"利润分成"里选——人们会天然按序列式表述,"或有确定"的固定回报被额外加权 <span class="badge b1">一手</span>。</li>
+</ul>
+</li>
+<li>问题 11/12(的钱版本,N=70/68)<span class="badge b1">一手</span>:先白给 1,000,再选"50% 赢 1,000 vs 稳拿 500"(84% 选稳);先白给 2,000,再选"50% 亏 1,000 vs 稳亏 500"(69% 选赌)。<strong>从最终财富看两题是同一道题</strong>(A = (2000, .50; 1000, .50) = C;B = (1500) = D)——但白给的钱被"取消"掉了,没并进参照点。
+<ul>
+<li>原文用 10 万美元的例子说明这有多严重:期望效用下,现有 95,000 还是 105,000 不该影响"稳拿 100,000 vs 对半拿 95,000/105,000"的选择;加风险厌恶假设后理论预测永远选稳拿,而数据显示<strong>起点低时选稳、起点高时选赌</strong><span class="badge b1">一手</span>。</li>
+</ul>
+</li>
+<li>由此得出全文的基石结论(原文原话):"the carriers of value or utility are <strong>changes of wealth</strong>, rather than final asset positions that include current wealth"<span class="badge b1">一手</span>。</li>
+</ul>
+
+<h3>价值函数 v(x):参照点是原点的 S 形</h3>
+
+<p>三条性质,原文自己的总结是:"(i) defined on deviations from the reference point; (ii) generally concave for gains and commonly convex for losses; (iii) steeper for losses than for gains"<span class="badge b1">一手</span>:</p>
+
+<ol>
+<li><strong>以参照点为原点</strong>:参照点通常是现状,但也会被表述和预期拽走(见下文"参照点会移动")。原文拿知觉做类比(引 Helson 1964 适应水平理论):同一杯水,手从冰水里进来觉得热、从热水里进来觉得凉——人感知的是变化和差异,不是绝对量。同一笔财富,对一个人是赤贫、对另一个是巨富,取决于各自现有资产。
+<ul>
+<li>原文还补了个精确化:严格说价值是<strong>双变量函数</strong>(参照点位置 + 偏移量),像一本册子,每页画某个资产位置上的价值函数;资产越高,函数越接近线性。但好消息是:赌局偏好序对资产位置的小到中度变动不敏感——"50% 赢 1,000"的确定等价物对多数人在很宽的资产范围内都落在 300–400 之间。所以单变量近似够用 <span class="badge b1">一手</span>。</li>
+</ul>
+</li>
+<li><strong>收益凹、损失凸</strong>:心理响应是物理变化量的凹函数——30 度到 60 度的温差比 130 度到 160 度的温差好分辨。原文假设这适用于钱的评估:赢 100 与赢 200 的心理差,大于赢 1,100 与赢 1,200 的心理差;亏损同理。
+<ul>
+<li>风险选择侧的验证是问题 13/13'(N=68/64):收益侧,82% 拒绝把"25% 赢 6000"换成"25% 赢 4000 + 25% 赢 2000"(期望相同),推出 v(6000) &lt; v(4000) + v(2000),即凹;损失侧 70% 反向偏好,推出 v(-6000) &gt; v(-4000) + v(-2000),即凸。Galanter &amp; Pliner 的无风险量表测量也给了支持 <span class="badge b1">一手</span>。</li>
+</ul>
+</li>
+<li><strong>损失侧更陡(损失厌恶)</strong>:推导极简——对称赌局 (x, .50; −x, .50) 让绝大多数人不舒服,且赌注越大越不舒服:(y, .50; −y, .50) 优于 (x, .50; −x, .50)。从公式 (1) 出发:v(y)+v(−y) &gt; v(x)+v(−x),即 v(−y)−v(−x) &gt; v(x)−v(y);令 y=0 得 <strong>v(x) &lt; −v(−x)</strong>;让 y 趋近 x 得 <strong>v′(x) &lt; v′(−x)</strong>:损失侧斜率处处更陡 <span class="badge b1">一手</span>。
+<ul>
+<li>原文金句:"losses loom larger than gains"(损失比收益更重要/更响)<span class="badge b1">一手</span>。</li>
+<li>注意:1979 年原文只有这三条<strong>定性</strong>性质,没有任何数字系数。"损失厌恶系数 2.25"是 1992 年的事,见后文。</li>
+</ul>
+</li>
+</ol>
+
+<figure>
+<svg viewBox="0 0 340 300" width="340" role="img" aria-label="价值函数 v(x) 示意图:S 形,收益侧凹、损失侧凸且更陡">
+  <!-- 轴 -->
+  <line x1="170" y1="20" x2="170" y2="280" stroke="currentColor" stroke-width="1.2" opacity="0.55"/>
+  <line x1="20" y1="150" x2="320" y2="150" stroke="currentColor" stroke-width="1.2" opacity="0.55"/>
+  <polygon points="320,150 312,146 312,154" fill="currentColor" opacity="0.55"/>
+  <polygon points="170,20 166,28 174,28" fill="currentColor" opacity="0.55"/>
+  <text x="316" y="168" font-size="12" fill="currentColor" opacity="0.75">收益 x</text>
+  <text x="178" y="30" font-size="12" fill="currentColor" opacity="0.75">价值 v(x)</text>
+  <text x="30" y="168" font-size="12" fill="currentColor" opacity="0.75">损失</text>
+  <!-- 收益侧:凹 -->
+  <path d="M 170 150 Q 225 88 310 52" fill="none" stroke="#4c9a68" stroke-width="2.6" stroke-linecap="round"/>
+  <!-- 损失侧:凸且更陡 -->
+  <path d="M 170 150 Q 130 232 46 272" fill="none" stroke="#c25b3f" stroke-width="2.6" stroke-linecap="round"/>
+  <text x="238" y="70" font-size="12" fill="#4c9a68">凹(收益)</text>
+  <text x="52" y="252" font-size="12" fill="#c25b3f">凸,更陡(损失)</text>
+  <circle cx="170" cy="150" r="3.2" fill="currentColor"/>
+  <text x="176" y="144" font-size="11" fill="currentColor" opacity="0.75">参照点</text>
+</svg>
+<figcaption>价值函数 v(x) 示意图(非原文复刻):S 形,以参照点为原点,收益侧凹、损失侧凸且更陡;在参照点处最陡。</figcaption>
+</figure>
+
+<ul>
+<li>原文还诚实标注了例外:人的效用函数不是"纯粹"的金钱态度——要凑 60,000 买房的人,价值函数在临界值附近会异常陡;大损失逼近"被迫卖房搬家"的门槛时,损失侧可能出现局部变凹。所以收益侧偶见凸、损失侧偶见凹,后者更常见 <span class="badge b1">一手</span>。</li>
+<li>S 形的一个原文强调的细节:这个价值函数<strong>在参照点处最陡</strong>——这与 Markowitz 1952 的效用函数(在参照点附近反而平缓)形成鲜明对照 <span class="badge b1">一手</span>。</li>
+<li>旁证:Fishburn &amp; Kochenberger 汇总 5 项独立研究、30 位企业决策者的 vNM 效用函数,大多数收益侧凹、损失侧凸,只有 3 个人在两侧都风险厌恶,且除一人外损失侧都明显更陡 <span class="badge b1">一手(原文转述)</span>。</li>
+</ul>
+
+<h3>概率权重函数 π(p):倒 S 形,端点跳变</h3>
+
+<ul>
+<li><strong>先立规矩</strong>:决策权重不是概率,"they do not obey the probability axioms and they should not be interpreted as measures of degree or belief"<span class="badge b1">一手</span>。原文举例:掷公平硬币,人人都同意赢的概率是 .50(可以通过押正反无差别、或口头报告验证),但从选择行为推出来的 π(.50) 很可能小于 .50。<strong>决策权重衡量的是事件对赌局吸引力的影响,不是人对它发生可能性的 belief。</strong></li>
+<li>四条性质 <span class="badge b1">一手</span>:
+<ol>
+<li><strong>低概率过度加权</strong>:π(p) &gt; p(小 p 时)。问题 14(N=72):0.1% 赢 5,000 vs 稳拿 5,72% 买彩票;问题 14':0.1% 亏 5,000 vs 稳亏 5,83% 交"保费"。两头都是小概率被放大的证据。数学上:买彩票意味着 π(.001)·v(5000) &gt; v(5),结合 v 凹(v(5)/v(5000) &gt; 5/5000)推出 π(.001) &gt; .001;保险侧用 v 凸同理。
+<ul>
+<li>原文特意区分:<strong>过度加权(overweighting,决策权重的性质)≠ 高估(overestimation,概率判断的偏差)</strong>。实验里概率是写明的,被试采信了 p,所以高估机制在这里不工作;现实生活中两者常叠加 <span class="badge b1">一手</span>。</li>
+</ul>
+</li>
+<li><strong>次可加性(subadditivity)</strong>:小概率区间 π(rp) &gt; r·π(p)。由问题 8(0.001 赢 6,000 优于 0.002 赢 3,000)推出 π(.001)/π(.002) &gt; 1/2;但大 p 时不必然成立(问题 7 里人们尊重 .90 与 .45 的差距)<span class="badge b1">一手</span>。</li>
+<li><strong>次确定性(subcertainty)</strong>:互补事件的权重之和小于 1,π(p) + π(1−p) ≤ 1。从问题 1/2 直接推出 π(.66) + π(.34) &lt; 1;从阿莱斯原版推出 π(.89) + π(.11) &lt; 1;MacCrimmon &amp; Larsson 的数据给出更多取值点。含义:人对概率变化的敏感度整体低于期望原则的要求——权重函数在开区间内"平缓"(regressive)<span class="badge b1">一手</span>。</li>
+<li><strong>次比例性(subproportionality)</strong>:同一概率比值,在低概率端的权重比值比高概率端更接近 1;数学上等价于 <strong>log π 是 log p 的凸函数</strong>。加上低概率过度加权,还能推出小概率端的次可加性——这几条性质互相咬合,钉死了 π 的倒 S 形状 <span class="badge b1">一手</span>。</li>
+</ol>
+</li>
+<li><strong>端点不连续</strong>:原文画出的假想权重函数(Figure 4)在开区间内相对平缓、在 π(0)=0 和 π(1)=1 两端急变("changes abruptly near the end-points")。解释是量子式的:一件事只要被赋予任何权重,就有一个下限;"一定量的怀疑"(a quantum of doubt)也给"不完全确定"封了顶——<strong>确定与不确定之间是一道范畴差异</strong>。再加上编辑阶段的简化(极小概率丢弃、极大概率当确定),原文的结论句值得逐字记:"Consequently, π is <strong>not well-behaved near the end-points</strong>"<span class="badge b1">一手</span>。</li>
+<li style="list-style:none">原文的总结句更狠:"highly unlikely events are either ignored or overweighted, and the difference between high probability and certainty is either neglected or exaggerated"——极小概率事件要么被忽略要么被放大,大概率与确定之间的差别要么被无视要么被夸大 <span class="badge b1">一手</span>。</li>
+<li>Zeckhauser 的俄罗斯轮盘赌例子 <span class="badge b1">一手(原文转述)</span>:被迫玩轮盘赌,花钱可以取出一颗子弹。从 4 颗减到 3 颗和从 1 颗减到 0 颗,同样减 1/6 的死亡概率,多数人愿意为"减到 0"付多得多的钱——纯经济学会说反过来才对(反正大概率活不下来钱也花不出去了)。π 的非线性解释了这种直觉。</li>
+<li>π 非线性的代价(原文坦白):对形如 (x, p; x, q) 与 (x, p′; x, q′) 的赌局(p+q = p′+q′ &lt; 1),任何人都会无差别——这看上去逼着 π 变成恒等函数。1979 版的挡箭牌是编辑阶段的"合并"操作(相同结局概率先合并)。更严重的麻烦是<strong>间接违反优势性</strong>:若 A&gt;B&gt;C 而 C 客观占优 A,理论无法阻止(原文引 Raiffa 1968 的三循环例子)。能挡直接违反(优势侦测),挡不住间接违反——这个自我暴露的漏洞,正是 1992 年 CPT 要修的门 <span class="badge b1">一手</span>。</li>
+</ul>
+
+<figure>
+<svg viewBox="0 0 340 300" width="340" role="img" aria-label="概率权重函数 π(p) 示意图:倒 S 形,低概率端高于对角线、高概率端低于对角线、端点跳变">
+  <!-- 对角线 y=x -->
+  <line x1="30" y1="270" x2="310" y2="30" stroke="currentColor" stroke-width="1" stroke-dasharray="5 4" opacity="0.45"/>
+  <text x="243" y="55" font-size="11" fill="currentColor" opacity="0.65">π(p) = p</text>
+  <!-- 轴 -->
+  <line x1="30" y1="270" x2="315" y2="270" stroke="currentColor" stroke-width="1.2" opacity="0.55"/>
+  <line x1="30" y1="270" x2="30" y2="20" stroke="currentColor" stroke-width="1.2" opacity="0.55"/>
+  <text x="278" y="288" font-size="12" fill="currentColor" opacity="0.75">概率 p</text>
+  <text x="38" y="30" font-size="12" fill="currentColor" opacity="0.75">π(p)</text>
+  <!-- 倒 S 曲线:低概率端高于对角线,中段平缓,高概率端低于对角线,端点跳变 -->
+  <path d="M 30 270 C 55 180 75 150 120 128 C 180 100 260 88 300 42" fill="none" stroke="#4c7fb8" stroke-width="2.6" stroke-linecap="round"/>
+  <circle cx="30" cy="270" r="3.2" fill="currentColor"/>
+  <circle cx="300" cy="42" r="3.2" fill="none" stroke="currentColor" stroke-width="1.4" stroke-dasharray="2 2"/>
+  <line x1="300" y1="30" x2="300" y2="42" stroke="#4c7fb8" stroke-width="2.2"/>
+  <circle cx="300" cy="30" r="3.2" fill="currentColor"/>
+  <text x="44" y="205" font-size="12" fill="#4c7fb8">放大:π(p) &gt; p</text>
+  <text x="196" y="132" font-size="12" fill="#4c7fb8">压低:π(p) &lt; p</text>
+  <text x="230" y="26" font-size="11" fill="currentColor" opacity="0.75">端点跳变</text>
+</svg>
+<figcaption>概率权重函数 π(p) 示意图(非原文复刻):倒 S 形,低概率被放大、中高概率被压低,在 p=0 与 p=1 两端跳变(虚线为 π(p)=p 对角线)。</figcaption>
+</figure>
+
+<h3>打分的两个副作用:风险态度不再是性格</h3>
+
+<ul>
+<li>前景理论里"风险厌恶/风险追求"不再是效用函数的属性,而是<strong>价值函数与权重函数叠加的产物</strong>。原文给出几个反直觉推论 <span class="badge b1">一手</span>:
+<ul>
+<li>决策权重本身就能制造风险厌恶或风险追求,哪怕 v 是线性的;</li>
+<li>收益域的风险追求,必要条件是 π(p) &gt; v(px)/v(x) &gt; p——即只在<strong>小概率</strong>区间出现;损失域的风险厌恶同理。所以理论预言:收益域爱赌、损失域求稳,都只发生在小概率端——"Indeed these are the typical conditions under which lottery tickets and insurance policies are sold"<span class="badge b1">一手</span>。</li>
+</ul>
+</li>
+</ul>
+
+<h3>伪确定性的种子:为什么彩票和保险同时有人买</h3>
+
+<ul>
+<li>1979 原文的答案链 <span class="badge b1">一手</span>:低概率过度加权 π(p) &gt; p,同时解释<strong>买彩票</strong>(小概率暴富被放大)和<strong>买保险</strong>(小概率灾难被放大);而 S 形价值函数(收益凹 = 该拒绝彩票,损失凸 = 该拒绝保险)本身其实在抑制这两种行为——两个机制对着干,小概率区是权重函数赢。</li>
+<li><strong>概率性保险(probabilistic insurance)</strong>,问题 9(N=95,斯坦福学生)<span class="badge b1">一手</span>:半价保费,但出险时 50% 概率要补齐另一半才赔、50% 概率退保自担(原文例子:事故发生在单数日赔、双数日不赔)。结果 <strong>80% 拒买</strong>。而期望效用理论(凹 u)证明:只要你勉强愿意买全险,就<strong>必然</strong>愿意买任何概率性保险(原文附录了完整证明:无差异条件下可推出 u(w−ry) &gt; 1−rp,当且仅当 u 凹成立)。数据干脆利落地打了凹性假设的脸。
+<ul>
+<li>原文点破:概率性保险其实是很多真实防护行动的抽象——装防盗警报、换旧轮胎、戒烟,都是"花确定的钱降低坏事的概率、但不清零"。人对这类"降一半"的支付意愿,远低于把概率从 p/2 降到 0:"reducing the probability of a loss from p to p/2 is less valuable than reducing the probability of that loss from p/2 to 0"<span class="badge b1">一手</span>。</li>
+</ul>
+</li>
+<li>伪确定性的雏形在这一段:原文 conjecture,"或有保险"(contingent insurance,对特定风险类型给确定保障,如只保盗窃)会比概率等价的概率性保险更吸引人——<strong>概率和结局完全相同的两个赌局,仅仅因为表述方式不同,价值就不同</strong>。这个思路在 1981 年 <em>Science</em> 的框架效应论文里被正式发扬为"伪确定性"(pseudo-certainty)<span class="badge b1">一手(1979 种子)</span>+<span class="badge b2">强(1981 论文存在)</span>/<span class="badge b3">中等(命名归属)</span>。</li>
+<li>原文同时自我设限:承认这套分析"falls far short of a fully adequate account"——保险购买经常延伸到中等概率区,小概率灾难有时干脆被完全忽略,表述上的微小改动就能大幅改变保险吸引力。还要考虑安全感价值、审慎的社会规范、讨厌分期小额支付、概率信息与误导等。这些不是文章失败的自白,而是给后来者划的作业范围 <span class="badge b1">一手</span>。</li>
+</ul>
+
+<h3>打分之外:投标和选择居然能互相打架</h3>
+
+<ul>
+<li>前景理论自定位为"选择"的模型。原文提醒:还有一类"生产型任务"——出价(bidding),让被试说出一个与赌局等值的价钱。这两条通道会系统性分岔:Lichtenstein &amp; Slovic 构造了这样一对赌局——人们<strong>选择</strong>时偏好 A,<strong>出价</strong>时却对 B 出更高的价;该现象在假想和真钱赌局里都复现,Grether &amp; Plott 进一步确认 <span class="badge b1">一手(原文转述)</span>。</li>
+<li>结论(原文):不能假定偏好序可以从出价程序里恢复;测量 v 和 π 应该用"给定赌局间的两两选择",而不是出价。这是对后来几十年的实验方法论都有影响的提醒(条件估值法之类的争议,此处只点到为止)<span class="badge b1">一手(原文立场)</span>+<span class="badge b3">中等(延伸)</span>。</li>
+</ul>
+
+<h3>参照点会移动</h3>
+
+<ul>
+<li>意外的扣税是<strong>损失</strong>,不是"收入变少";比同行亏得少的创业者,把小亏<strong>编码成赢</strong>(相对于预期的大亏)<span class="badge b1">一手</span>。</li>
+<li>还没适应亏损 2,000 的人,面对"稳赢 1,000 vs 对半赢 2,000"会把它编码成"稳亏 1,000 vs 对半亏 2,000"——于是变冒险了。原文还给了正式命题:若赌局 (x, p; −y, 1−p) 恰好可接受,则整体下移 z 后 (x−z, p; −y−z, 1−p) 严格优于稳亏 z——证明一步不落,最后一步用次确定性收尾 <span class="badge b1">一手</span>。</li>
+<li>由此给赌马场的老观察一个机制:一天越到后面,越多人押大冷门(long shot)——没止损的人越赌越凶(数据引 McGlothlin 1956)<span class="badge b1">一手(机制)</span>+<span class="badge b1">一手(转述数据)</span>。</li>
+<li>反向操作也存在:预期要买保险的人(自己以前买过、或朋友都买),把交保费编码进"买保障"的框架而不是"确定亏保费 vs 或然大亏",保险就更香 <span class="badge b1">一手</span>。</li>
+<li>原文还留了一手:如果按决策分析教学的那样<strong>显式用最终财富表述问题</strong>,参照点归零、价值函数处处凹,损失域的风险偏好基本消失——"The explicit formulation of decision problems in terms of final assets is perhaps the most effective procedure for eliminating risk seeking in the domain of losses"<span class="badge b1">一手</span>。这句对普通人是实用建议:算账时老老实实算总账。</li>
+<li>最后一击(购买 vs 接受的不对称):人们决定"花 10 买 (1000, .01)"时,并不把它当成"接受 (990, .01; −10, .99)"——人不会做"从结局里减去价格"的整合,而是<strong>分开评估</strong>赌局和价格,合起来值为正就买。前景理论因此预言:人对"免费接受公平赌局"比"花公道价买赌局"更愿意冒险 <span class="badge b1">一手</span>。</li>
+</ul>
+
+<h2 id="glossary">术语速查表</h2>
+
+<div class="scroll">
+<table>
+<tr><th>原文术语</th><th>本文译法</th><th>一句话解释</th></tr>
+<tr><td>prospect</td><td>前景/赌局</td><td class="wrap">一张以各概率获得各结局的彩票合同</td></tr>
+<tr><td>certainty effect</td><td>确定效应</td><td class="wrap">从 100% 变成"仅仅很可能"的心理落差,远大于同等概率幅度的高位削减</td></tr>
+<tr><td>reflection effect</td><td>反射效应</td><td class="wrap">收益全翻成损失后,偏好几乎镜像翻转</td></tr>
+<tr><td>isolation effect</td><td>分离效应</td><td class="wrap">共有成分被丢弃,导致同一道题换个包装就换答案</td></tr>
+<tr><td>editing phase</td><td>编辑阶段</td><td class="wrap">打分前的整理:编码/合并/拆分/取消/简化/优势侦测</td></tr>
+<tr><td>evaluation phase</td><td>评价阶段</td><td class="wrap">用 V = π·v 给编辑好的选项打分</td></tr>
+<tr><td>value function v(x)</td><td>价值函数</td><td class="wrap">定义在相对参照点的变化量上:收益凹、损失凸、损失侧更陡</td></tr>
+<tr><td>weighting function π(p)</td><td>概率权重函数</td><td class="wrap">概率的心理放大器:小 p 放大、中高 p 压低、端点跳变</td></tr>
+<tr><td>decision weight</td><td>决策权重</td><td class="wrap">π(p) 的值;不是概率、不是主观信念</td></tr>
+<tr><td>reference point</td><td>参照点</td><td class="wrap">编码收益/损失的原点,通常是现状,但可被预期和表述拽走</td></tr>
+<tr><td>subadditivity</td><td>次可加性</td><td class="wrap">小概率区间 π(rp) &gt; r·π(p)</td></tr>
+<tr><td>subcertainty</td><td>次确定性</td><td class="wrap">π(p) + π(1−p) ≤ 1:互补事件加起来压不过"确定"</td></tr>
+<tr><td>subproportionality</td><td>次比例性</td><td class="wrap">等比削概率,低概率端感受更钝;等价于 log π 凸于 log p</td></tr>
+<tr><td>probabilistic insurance</td><td>概率性保险</td><td class="wrap">只消掉一半风险的保险;实验里 80% 的人拒买</td></tr>
+<tr><td>loss aversion</td><td>损失厌恶</td><td class="wrap">v(x) &lt; −v(−x):同额损失比收益心理上更重(1979 只有定性形式)</td></tr>
+<tr><td>pseudo-certainty</td><td>伪确定性</td><td class="wrap">或有条件下给出的"确定感"被超额加权(1981 年正式展开)</td></tr>
+</table>
+</div>
+
+<h2 id="quotes">原文金句(逐字,均可复核)</h2>
+
+<blockquote><p>"losses loom larger than gains"——损失比收益更响。价值函数第三性质的口语版。</p></blockquote>
+
+<blockquote><p>"the carriers of value or utility are changes of wealth, rather than final asset positions that include current wealth"——价值的载体是财富变化,不是含现有财富的最终状态。全文的地基。</p></blockquote>
+
+<blockquote><p>"π is not well-behaved near the end-points"——权重函数在 0 和 1 附近不成体统。端点跳变的原文表述。</p></blockquote>
+
+<blockquote><p>"highly unlikely events are either ignored or overweighted, and the difference between high probability and certainty is either neglected or exaggerated"——极小概率要么被无视要么被放大;大概率与确定之间的差别要么被无视要么被夸大。</p></blockquote>
+
+<blockquote><p>"Decision weights measure the impact of events on the desirability of prospects, and not merely the perceived likelihood of these events."——决策权重测的是事件对赌局吸引力的影响,不只是感知到的可能性。</p></blockquote>
+
+<blockquote><p>"reducing the probability of a loss from p to p/2 is less valuable than reducing the probability of that loss from p/2 to 0"——把损失概率砍半,不如把它清零值钱。</p></blockquote>
+
+<blockquote><p>"The value function is normally concave for gains, commonly convex for losses, and is generally steeper for losses than for gains."——摘要里的一句话总结,S 形的全部。</p></blockquote>
+
+<blockquote><p>"utility theory, as it is commonly interpreted and applied, is not an adequate descriptive model"——全文的靶心。</p></blockquote>
+
+<h2 id="examples">简单例子</h2>
+
+<h3>例子一:白捡 100 再丢 50,为什么比没捡过还难受</h3>
+
+<ul>
+<li>纯算术:净得 50,怎么算都是赚。</li>
+<li>前景理论的账:参照点会动。捡到 100 的瞬间,参照点从 0 跳到 +100;再丢 50,是从 +100 往下掉——<strong>损失侧,而且是更陡的那一侧</strong>。心理上这件事不是"+50",而是"一次中幅赢 + 一次半幅亏",亏的那半因为损失厌恶被放大。</li>
+<li>诚实标注:这个"捡钱再丢钱"的具体场景是我编的日常化包装,原文没有这个实验;它的机制依据(参照点编码 + 损失侧更陡)是原文一手内容。顺带一提,原文的性质还预言了相反方向的快乐学:由于收益侧边际递减,分两次捡钱比一次捡双倍更爽,而分两次花钱比一次花双倍更疼——这是 Thaler 后来"心理账户/享乐编辑"的种子 <span class="badge b1">一手(性质)</span>+<span class="badge b3">中等(延伸)</span>。</li>
+</ul>
+
+<h3>例子二:同一个人,为什么既买彩票又买保险</h3>
+
+<ul>
+<li>表面看这是两个人:一个爱赌,一个怕险。实际上同一个人经常两样都干。</li>
+<li>前景理论拆解:彩票和保险的共同点是<strong>小概率、大额结局</strong>。权重函数在小概率端把 p 放大(π(.001) &gt; .001),于是:
+<ul>
+<li>0.1% 赢 5,000 被"放大"成一件值得花 5 块钱买的事(问题 14,72% 的人买)——彩票;</li>
+<li>0.1% 亏 5,000 同样被放大成值得花 5 块钱消掉的事(问题 14',83% 的人交钱)——保险。</li>
+</ul>
+</li>
+<li>而 S 形价值函数(收益凹、损失凸)本该让人两个都拒绝——稳拿 5 / 稳亏 5 在 v 上都优于赌。两个机制打架,小概率区间权重函数说了算。</li>
+<li>生活版:花 20 块买彩票的人,和花两千块买医疗险的人,可能是同一批人;彩票池和保险公司赚的是同一种心理差价——<strong>都是那道放大小概率的 π 函数</strong>。</li>
+</ul>
+
+<h3>例子三(Zeckhauser 的):轮盘赌里花钱取子弹</h3>
+
+<ul>
+<li>被迫玩俄罗斯轮盘赌(6 弹膛装 4 颗弹),允许花钱取出一颗。取第 4 颗(4→3)和取第 1 颗(1→0),同样把死亡概率降 1/6,人们愿意为后者付的钱多得多。</li>
+<li>从 1 到 0 越过了"确定与不确定"的范畴边界——正是 π 函数在端点跳变的地方。概率权重不是一条平滑直线,<strong>"彻底消除"这个动作在心理上自成一类</strong>。</li>
+<li>这也是为什么"零添加""无事故记录""完全无风险"这类说法贵得有道理:它们卖的是端点,不是概率差 <span class="badge b1">一手(轮盘赌例子)</span>+<span class="badge b3">中等(营销延伸是我的话)</span>。</li>
+</ul>
+
+<h3>例子四:补一半保费为什么不划算(概率性保险的日常脸孔)</h3>
+
+<ul>
+<li>问题 9 的设定翻译成生活语言:保险公司在出险时抛硬币决定赔不赔,保费收一半。80% 的人宁可不买。</li>
+<li>但把同样的逻辑换个包装——"装防盗警报,把被盗概率从 1% 降到 0.5%"——人们却愿意掏钱。明明两件事在数学上都是"花钱消掉一半风险",偏好却截然相反。</li>
+<li>区别就在"清零":警报只是降概率,而全险(哪怕只保盗窃这一类)给的是<strong>确定</strong>。伪确定性的日常用法:商家爱卖"包赔""全额退""无理由"这种端点产品,因为端点在心理账本上的溢价远超概率差 <span class="badge b1">一手(问题 9 + conjecture)</span>+<span class="badge b3">中等(商业延伸)</span>。</li>
+</ul>
+
+<h2 id="grading">证据分级(汇总)</h2>
+
+<ul>
+<li><span class="badge b1">一手</span> 本次读到的原文全文及其承载的全部内容:14 组(含镜像)选择问题的编号、被试数与百分比(N=66 至 N=141;82%/83%/80%/65%/78%/84%/69%/92%/72%/83% 等)、六种编辑操作、公式 (1)(2)、价值函数三性质与损失厌恶推导、权重函数四性质与端点跳变、概率性保险问题(N=95)及其证明、方法论自辩段、投标-选择分歧、参照点移动命题及证明、俄罗斯轮盘赌例子、经费与收稿脚注、48 条参考文献表。可按全文文本逐条复核。</li>
+<li><span class="badge b2">强</span> 多个独立来源一致、本次交叉核实过的:卷期页码(Econometrica 官网 + RePEc);1981 Science 框架论文的卷期页(PubMed);λ=2.25 归属 TK1992(Warwick 元分析原文明写);Gal &amp; Rucker 2018 论文存在(SSRN/期刊记录);卡尼曼 2002 诺奖与特沃斯基 1996 病逝(公共事实,多源)。</li>
+<li><span class="badge b3">中等</span> 单一可信来源或未回溯原文的:TK1992 的其余参数(α≈0.88 等)与被试规模;"伪确定性"命名首出 1981 论文的具体措辞;Abdellaoui/Bleichrodt 系列测量研究的内容细节;真实激励实验与场数据(处置效应、房产挂价等)对前景理论的补强细节;两项元分析各自的具体数值口径;被引数近十万量级;Thaler 心理账户/享乐编辑与本文的传承关系。</li>
+<li><span class="badge b4">争议</span> 口径分歧明显或方法受质疑的:假想选择法的外部效度(原文自认 + 后续真实激励研究部分补强但未终结);损失厌恶是否稳健、2.25 是否有意义(2018 年起的 Gal/Rucker 与元分析/再元分析之争);前景理论公理体系本身(原文承认允许间接违反优势性)。</li>
+<li><span class="badge bd">D</span> 本次未能溯源的:"Parsey &amp; Brown 2020 复制失败之争"——检索不到该署名论文,不引用,存疑待考。</li>
+</ul>
+
+<h2 id="timeline">前后文坐标:这篇论文站在哪</h2>
+
+<p>时间线只列与本文直接相关、出处可查的节点【除标注外均为一手(原文参考文献表)或多源公共事实(强)】:</p>
+
+<ul>
+<li>1738/1948:圣彼得堡悖论与期望效用的思想源头(原文提到 18 世纪早期决策理论家用凹效用解释风险厌恶)。</li>
+<li>1944:冯·诺依曼–摩根斯坦《博弈论与经济行为》公理化期望效用(原文参考文献 [47])。</li>
+<li>1952:Markowitz "The Utility of Wealth"——第一个提议效用定义在收益/损失而非最终资产上,并注意损失域风险追求(原文明确承认这是先行者)。</li>
+<li>1953:Allais 悖论——期望效用第一个著名反例(原文问题 1/2 的原型)。</li>
+<li>1954:Savage《The Foundations of Statistics》主观期望效用体系(原文参考文献 [36])。</li>
+<li>1962:Edwards "Subjective Probabilities Inferred from Decisions"——决策权重思想的先声(原文致谢处点名)。</li>
+<li>1971:Lichtenstein &amp; Slovic 偏好反转;后被 Grether &amp; Plott 在经济学口径下确认(原文都引了)。</li>
+<li>1974:Tversky &amp; Kahneman "Judgment under Uncertainty"(Science 185)——启发式与偏差纲领,本文的方法论前奏。</li>
+<li><strong>1979:本文。</strong></li>
+<li>1981:框架效应论文(Science 211),伪确定性、亚洲疾病问题等(本文"或有保险"conjecture 的展开)。</li>
+<li>1982:Quiggin 秩依赖效用——CPT 的数学零件之一 <span class="badge b3">中等</span>。</li>
+<li>1985 前后:Thaler 把前景理论引入经济学现场(心理账户、禀赋效应方向)<span class="badge b3">中等</span>。</li>
+<li>1992:累积前景理论(CPT),λ=2.25 由此而来。</li>
+<li>2002:卡尼曼获诺贝尔经济学奖;特沃斯基已于 1996 年病逝 <span class="badge b2">强</span>。</li>
+<li>2011:卡尼曼《Thinking, Fast and Slow》把前景理论带向大众 <span class="badge b2">强</span>。</li>
+<li>2018–2025:损失厌恶之争(Gal &amp; Rucker → 元分析 → 再元分析),见下节。</li>
+</ul>
+
+<h2 id="criticism">后续批评与修正</h2>
+
+<ol>
+<li><strong>"假设性、小额、样本小"的方法批评,以及它的补强</strong>
+<ul>
+<li>批评:十几个问题全是假想选择题,单题样本几十人,没有真实金钱激励;真实激励下偏好可能翻转;被试可能根本不看数字只凭直觉按键。</li>
+<li>有利的证据线:1979 年之后的几十年里,真实激励实验持续复现核心模式;场数据从侧面支持"参照点依赖 + 损失厌恶"——最常被引的是处置效应(投资者拿住亏损股太久、过早卖出盈利股<span class="badge b3">中等</span>)和房产市场(亏损房主开价更高、更难成交<span class="badge b3">中等</span>);赛马场赌徒的日末追冷门也有长期观察 <span class="badge b3">中等</span>。</li>
+<li>不利/复杂的证据线:每一条场证据的机制归因都有争论(处置效应也能用信念解释);假想与真实激励的差距本身有系统研究;小赌注下损失厌恶变弱甚至消失(见 Yechiam 系列工作)<span class="badge b4">争议</span>。</li>
+<li>诚实结论:方法批评没有终结,但也没有推翻——核心现象在多种方法下都有独立证据,效应大小和方法有关,这本身就是后来争论的主战场 <span class="badge b4">争议</span>。</li>
+</ul>
+</li>
+<li><strong>理论修正:累积前景理论(CPT, 1992)</strong>
+<ul>
+<li>1979 版的软肋原文自己招了:π 非线性会导致<strong>间接违反优势性</strong>(A&gt;B&gt;C 但 C 客观占优 A 的三循环),只能靠编辑阶段的"优势侦测"挡,挡不全;多结局扩展也依赖编辑假设 <span class="badge b1">一手</span>。</li>
+<li>1992 年 Tversky &amp; Kahneman 提出 CPT:用<strong>累积概率</strong>加权(思想源自 Quiggin 1982 的秩依赖效用 <span class="badge b3">中等</span>)——每个结局的权重取决于它在结局排序中占据的概率区间,而不是各自概率。这同时修掉优势性违反、天然扩展到连续分布和任意多结局 <span class="badge b3">中等(细节)</span>/<span class="badge b2">强(1992 论文存在与 λ=2.25 出处)</span>。</li>
+<li>CPT 从小样本(数十名被试量级)估出参数:λ=2.25(损失厌恶系数的著名出处,中位估计)、价值函数幂指数 α=β≈0.88、权重函数参数约 γ≈0.61(收益)/δ≈0.69(损失)<span class="badge b2">强(λ 出处)</span>/<span class="badge b3">中等(其余参数与样本细节)</span>。</li>
+<li>值得强调:CPT 不是对 1979 版的否定,而是把 1979 的定性框架(参照点、S 形 v、倒 S 形权重)装进一个公理上更干净的数学外壳。三根柱子原封不动 <span class="badge b3">中等</span>。</li>
+</ul>
+</li>
+<li><strong>损失厌恶系数的 2018 年后之争</strong>
+<ul>
+<li>λ=2.25 从 1992 年起被广泛引用成"损失的感受约是收益的两倍"的口头定律。但注意:<strong>1979 原文没有任何数字系数</strong>,2.25 只是 1992 年一个小样本的<strong>中位估计</strong><span class="badge b1">一手(1979 无系数)</span>/<span class="badge b2">强(出处)</span>。</li>
+<li>2018 年,Gal &amp; Rucker 发文 "The Loss of Loss Aversion",主张损失厌恶被高估:证据异质、发表偏倚、不少领域测不到稳健的损失不对称 <span class="badge b2">强(论文存在)</span>/<span class="badge b3">中等(主张细节)</span>。</li>
+<li>2020 年前后出现反弹阵营:如 Mrkva 等(2020, JCP)反驳"损失厌恶有调节变量,但报它的死讯为时过早"<span class="badge b3">中等(未读原文,按综述方向转述)</span>。</li>
+<li>元分析层面开打:Walasek, Mullett &amp; Stewart 的 "A meta-analysis of loss aversion in risky contexts"(Journal of Economic Psychology,2024)汇总 607 个经验估计(150 篇文献,横跨经济学/心理学等),结论是损失厌恶总体证据强、均值显著大于 1——但系数远非普适的 2.25、跨情境异质性大 <span class="badge b3">中等(数值按其托管全文口径)</span>;2025 年 Yechiam 等的再元分析 "Loss Aversion is Not Robust" 对同一批数据重分析,质疑稳健性(称小赌注等条件下效应不成立)<span class="badge b3">中等</span>。</li>
+<li>Abdellaoui、Bleichrodt、l'Haridon 等 2000 年代发展的直接测量方法持续给出"损失厌恶存在但幅度因人、因法、因赌注而异"的测量结果 <span class="badge b3">中等</span>。</li>
+<li><strong>这场争论的诚实总结</strong>:多数派立场是"损失不对称现象真实存在,但 2.25 不是常数、不是普适,效应大小依赖测量方法、赌注大小与领域";少数派立场是"损失厌恶作为普适规律的地位被夸大,小赌注下常常消失"。双方都不否认 1979 年的定性发现(参照点、反射效应、小概率放大)。在可预见的将来这仍是一桩活案,本文按 <span class="badge b4">争议</span> 存档。</li>
+</ul>
+</li>
+<li><strong>与期望效用理论的和解视角</strong>
+<ul>
+<li>原文姿态本来就不是"推翻":开篇承认期望效用是规范模型的合理候选(引 Keeney &amp; Raiffa、Savage),攻的只是描述性;还明说一旦决策者"realizes that his preferences are inconsistent, intransitive, or inadmissible",会自行纠正——理论解释的是人<strong>没机会发现不一致</strong>时的系统性偏差 <span class="badge b1">一手</span>。</li>
+<li>后来几十年形成的分工:期望效用留在规范侧(理性决策的基准),前景理论/CPT 占据描述侧;两者数学血缘很近——CPT 本身就是秩依赖框架下的期望效用推广。经济学没有抛弃期望效用,而是在它旁边为描述现实加了一层 <span class="badge b2">强(格局共识)</span>/<span class="badge b3">中等(表述)</span>。</li>
+<li>阿莱斯本人的立场可以当花絮:他认为悖论说明的是"美国学派"(冯·诺依曼–摩根斯坦)的公理该修,跟卡尼曼他们"心理机制本来就长这样"的路线不是一回事 <span class="badge b3">中等</span>。</li>
+</ul>
+</li>
+</ol>
+
+<h2 id="misread">误解澄清</h2>
+
+<ol>
+<li><strong>误解:"前景理论 = 人都是非理性的。"</strong>
+<ul>
+<li>原文明确写:当决策者意识到偏好不一致、不可传递或违反优势性时,"such anomalies of preference are normally corrected by the decision maker";前景理论预言的是人<strong>没机会发现</strong>时的偏差。理论刻画的是信息加工的系统性倾向,不是给人贴非理性标签;原文通篇也没用"非理性"给人定性 <span class="badge b1">一手</span>。</li>
+</ul>
+</li>
+<li><strong>误解:"损失厌恶系数 2.25 是普适常数,卡尼曼 1979 年就算出来了。"</strong>
+<ul>
+<li>1979 原文只有定性推导 v(x) &lt; −v(−x),没有任何系数;2.25 是 1992 年 CPT 论文基于小样本的<strong>中位估计</strong>;近年的元分析与再元分析表明系数跨方法、跨赌注、跨领域波动很大,小赌注下甚至测不到 <span class="badge b1">一手</span>+<span class="badge b2">强</span>+<span class="badge b4">争议</span>,见上节。</li>
+</ul>
+</li>
+<li><strong>误解:"卡尼曼和特沃斯基证明了经济学错了。"</strong>
+<ul>
+<li>他们证明的是<strong>期望效用理论作为描述模型不充分</strong>,而且连"推翻经济学"的姿态都没有——论文发表在 Econometrica(经济学顶刊),语言、模型和实验范式全在经济学传统内;被挑战的期望效用仍是规范基准。后来是经济学<strong>吸收</strong>了这套工具(2002 诺奖发给的正是"把心理学整合进经济科学"方向的工作),不是经济学被证伪 <span class="badge b1">一手(论文姿态)</span>+<span class="badge b2">强(诺奖事实)</span>。</li>
+</ul>
+</li>
+<li><strong>误解:"π(p) 就是我觉得 p 有多大(主观概率)。"</strong>
+<ul>
+<li>原文专门警告过:决策权重不服从概率公理,不应解读为信念度(degree of belief)。掷硬币你知道是 50%,但 π(.50) 照样小于 0.5——权重影响的是<strong>这个赌局对你的吸引力</strong>,不是你脑子里的概率估计。把 π 读成主观概率,会把"低估大概率"误读成"人们真的以为大概率不会发生"<span class="badge b1">一手</span>。</li>
+</ul>
+</li>
+<li><strong>误解:"前景理论适用于一切真实世界的概率判断。"</strong>
+<ul>
+<li>1979 版 explicitly 只处理"明确给出数值概率"的简单货币赌局,还假定被试采信所给的 p;模糊性(vagueness/ambiguity)、主观概率偏差都是文中"扩展方向"一节才点名的待办(Ellsberg、Fellner 的工作被引)。拿它直接解释复杂现实判断,要记得先过这些桥 <span class="badge b1">一手</span>。</li>
+</ul>
+</li>
+</ol>
+
+<h2 id="ending">一段话收尾</h2>
+
+<p>1979 年这篇论文做对的事,不是算出某个系数,而是把三件定性事实钉进了决策科学:人评价的是<strong>变化</strong>不是状态(参照点);人对<strong>确定与不确定的边界</strong>反应过度(端点跳变);小概率在心理上被<strong>放大</strong>而不是抹平(彩票与保险同源)。几十年后系数在吵、复制在吵,这三根柱子没人搬得动。读它的正确姿势是把它当一份"偏差地图"而不是"人性判决书"——地图上每一处,作者都自己标了边界(假想选择的局限、间接违反优势性的漏洞、保险理论的不完整),这大概是这篇 1979 年的论文到今天还值得逐页读的真正原因。</p>
+
+<p class="footer">解读完成于 2026-09-07。原文全文文本(Econometrica 47(2), 263–291)经网页渲染抓取 MIT 存档 PDF 获得;所有【一手】标注均可对照该文本复核。配套源文件:<code>prospect-theory.md</code>。</p>
+
+</main>
+</body>
+</html>
