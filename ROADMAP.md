@@ -226,7 +226,7 @@
 |---|------|--------|------|
 | 1 | 论文解读:Watson & Crick《Molecular Structure of Nucleic Acids》(Nature 1953) | 口语化解读 | `docs/papers/dna-structure.md` + `.html` |
 | 2 | 论文解读:Kahneman & Tversky《Prospect Theory》(Econometrica 1979) | 口语化解读 | `docs/papers/prospect-theory.md` + `.html` |
-| 3 | 审校位:R8 两篇第三轮审校(面包史/保险史),严判全面生效 | 审校记录 + 勘误回填 | `experiments/spaced-review/R19/` |
+| 3 | 审校位:R8 两篇第三轮审校(抗生素史/历法改革),严判全面生效 | 审校记录 + 勘误回填 | `experiments/spaced-review/R19/` |
 
 ## 第 7 轮(2026-09-06,✅ 已完成)
 
